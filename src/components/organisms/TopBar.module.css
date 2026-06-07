@@ -1,0 +1,102 @@
+.top-bar {
+  @apply fixed inset-x-0 top-0 z-40 h-16 border-b border-brand-200 bg-white/95 backdrop-blur;
+  background: var(--theme-chrome-bg, rgb(255 255 255 / 0.95));
+  border-color: var(--theme-border, #e2e2e2);
+}
+
+.top-bar__content {
+  @apply relative grid h-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 px-4 sm:px-6 lg:px-7;
+}
+
+.top-bar__brand-area {
+  @apply col-start-1 flex min-w-0 items-center justify-self-start;
+}
+
+.top-bar__quick-clock {
+  @apply hidden min-w-0;
+}
+
+@media (min-width: 1280px) {
+  .top-bar__quick-clock {
+    display: block;
+    left: max(calc(248px + 2rem), calc(50vw - 32.25rem));
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.top-bar__brand {
+  @apply flex items-center gap-2.5 rounded-full;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black;
+  outline-color: var(--theme-focus, #000000);
+}
+
+.top-bar__brand-logo {
+  width: min(40vw, 10rem);
+  height: auto;
+  max-height: 2.25rem;
+  object-fit: contain;
+}
+
+@media (min-width: 640px) {
+  .top-bar__brand-logo {
+    width: 11.125rem;
+  }
+}
+
+.top-bar__actions {
+  @apply col-start-3 flex items-center gap-1 justify-self-end;
+}
+
+.top-bar__week-total {
+  @apply mr-1 hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-transparent bg-brand-100 px-3 py-2 text-sm font-medium text-black xl:inline-flex;
+  background: var(--theme-surface-muted, #efefef);
+  color: var(--theme-text, #000000);
+}
+
+.top-bar__week-icon {
+  @apply h-4 w-4 text-black;
+  color: var(--theme-text, #000000);
+}
+
+.top-bar__week-label {
+  @apply shrink-0;
+}
+
+.top-bar__week-value {
+  @apply shrink-0 text-slate-950;
+  color: var(--theme-strong, #020617);
+}
+
+.top-bar__utility-button {
+  @apply relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-black hover:bg-brand-100;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black;
+  color: var(--theme-text, #000000);
+  outline-color: var(--theme-focus, #000000);
+}
+
+.top-bar__utility-button:hover {
+  background: var(--theme-surface-muted, #efefef);
+}
+
+.top-bar__utility-button--active {
+  @apply bg-black text-white hover:bg-black;
+  background: var(--theme-accent, #000000);
+  color: var(--theme-on-accent, #ffffff);
+}
+
+.top-bar__utility-button--active:hover {
+  background: var(--theme-accent-hover, #000000);
+}
+
+.top-bar__utility-icon {
+  @apply h-5 w-5;
+}
+
+.top-bar__notification-count {
+  @apply absolute right-2 top-2 min-w-4 rounded-full bg-black px-1 text-[10px] font-bold leading-4 text-white ring-2 ring-white;
+  background: var(--semantic-danger-strong, #b91c1c);
+  color: var(--semantic-danger-on, #ffffff);
+  --tw-ring-color: var(--theme-surface, #ffffff);
+}

@@ -1,0 +1,79 @@
+.quick-clock-panel {
+  @apply rounded-2xl border border-brand-200 bg-white p-4 shadow-soft lg:hidden;
+  background: var(--theme-surface, #ffffff);
+  border-color: var(--theme-border, #e2e2e2);
+  box-shadow: var(--theme-shadow, 0 4px 16px rgb(0 0 0 / 0.12));
+}
+
+.quick-clock-panel__content {
+  @apply flex flex-col gap-3 sm:flex-row sm:items-end;
+}
+
+.quick-clock-panel__field {
+  @apply min-w-0 flex-1;
+}
+
+.quick-clock-panel__title {
+  @apply text-sm font-bold text-black;
+  color: var(--theme-strong, #000000);
+}
+
+.quick-clock-panel__label {
+  @apply sr-only;
+}
+
+.quick-clock-panel__input {
+  @apply mt-2 min-h-11 w-full rounded-md border border-transparent bg-brand-100 px-4 text-sm text-black placeholder:text-slate-500;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black;
+  background: var(--theme-input, #efefef);
+  color: var(--theme-text, #000000);
+  outline-color: var(--theme-focus, #000000);
+}
+
+.quick-clock-panel__input::placeholder {
+  color: var(--theme-placeholder, #64748b);
+}
+
+.quick-clock-panel__project {
+  @apply min-w-[180px];
+}
+
+.quick-clock-panel__select {
+  @apply min-h-11 w-full rounded-md border border-transparent bg-brand-100 pl-4 pr-10 text-sm font-medium text-black;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black;
+  background-color: var(--theme-input, #efefef);
+  color: var(--theme-text, #000000);
+  outline-color: var(--theme-focus, #000000);
+}
+
+.quick-clock-panel__timer {
+  @apply flex min-h-11 min-w-[130px] items-center justify-center rounded-full border border-transparent bg-brand-100 px-4 font-mono text-lg font-bold tabular-nums text-black;
+  background: var(--theme-surface-muted, #efefef);
+  color: var(--theme-strong, #000000);
+}
+
+.quick-clock-panel__button {
+  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-medium;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black;
+  outline-color: var(--theme-focus, #000000);
+}
+
+.quick-clock-panel__button--idle {
+  @apply bg-black text-white hover:bg-brand-800;
+  background: var(--theme-accent, #000000);
+  color: var(--theme-on-accent, #ffffff);
+}
+
+.quick-clock-panel__button--idle:hover {
+  background: var(--theme-accent-hover, #282828);
+}
+
+.quick-clock-panel__button--running {
+  @apply bg-brand-800 text-white;
+  background: var(--theme-accent-hover, #282828);
+  color: var(--theme-on-accent, #ffffff);
+}
+
+.quick-clock-panel__button-icon {
+  @apply h-4 w-4;
+}

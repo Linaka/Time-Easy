@@ -22,21 +22,25 @@ Before a change is complete:
 
 | Playbook area | Current project approach |
 |---|---|
-| SOLID and separation of concerns | Domain calculations, validation, date formatting, storage hooks, app orchestration, and shared UI are separated into focused modules. |
+| SOLID and separation of concerns | Domain calculations, validation, date formatting, persistence-backed workspace state, timer control, desktop import/export actions, app orchestration, page contracts, page views, and shared UI are separated into focused modules. |
 | React standards | The app uses functional components and hooks. The only class component is `ErrorBoundary`, which is the React 18-compatible boundary API. |
-| Atomic design | Shared UI is split into atoms, molecules, organisms, and templates. Feature-specific page components stay in `src/App.jsx` until reuse justifies promotion. |
+| Atomic design | Shared UI is split into atoms, molecules, organisms, and templates. Feature-specific page components live in `src/pages`, page prop contracts live in `src/pages/pagePropsBySection.js`, while `src/App.jsx` remains the shell and section registry. |
+| Styling | Shared components use sibling CSS Modules with BEM-style block, element, and modifier class names; Tailwind utilities are applied inside those modules. |
 | Accessibility | Landmarks, semantic tables/forms, icon button names, `aria-current`, focus rings, route focus management, live status messages, and reduced-motion CSS are implemented. |
 | Security | React text rendering is used, script-like input is blocked, CSV output is escaped, and client logs redact sensitive context. |
 | Reliability | An error boundary prevents render failures from blanking the whole browser without recovery. |
 | Performance | The app avoids additional runtime dependencies, keeps pure calculations testable, and uses Vite production builds as the bundle check. |
-| Observability | Client render errors are logged through `src/services/clientLogger.js` with sensitive fields redacted. |
-| Documentation | README, this compliance note, ADRs, and PR checklist document the project contract and quality gates. |
+| Authorization | Role and permission rules live in `src/domain/auth.js`; navigation and settings access use that shared contract. |
+| Observability | Client render/global errors and key workspace events flow through `src/services/clientLogger.js` with sensitive fields redacted and optional same-origin telemetry delivery. |
+| Release gates | GitHub Actions runs install, tests, build, and production dependency audit on pushes and pull requests. |
+| Deployment hardening | Static hosting headers define CSP, frame blocking, sniffing protection, referrer policy, and browser permissions policy. |
+| Documentation | README, production readiness notes, this compliance note, ADRs, and PR checklist document the project contract and quality gates. |
 
 ## Known Constraints
 
 - The prototype is JavaScript rather than TypeScript. Public contracts are kept small and covered by focused tests; a TypeScript migration should be treated as a separate architecture decision if the prototype becomes a long-lived product.
-- Some feature page components remain in `src/App.jsx` because the app is still a single-route prototype. Extract a feature into `src/features/*` when a page gains independent tests, services, or reuse.
-- Automated accessibility tooling is not installed. Manual accessibility checks are documented in `README.md`; add axe, Playwright, or equivalent checks when CI is introduced.
+- Feature pages are isolated from the app shell through explicit page contracts. Extract a feature into `src/features/*` when a page gains independent tests, services, or reuse.
+- Static accessibility/security regression tests are included. Add full browser a11y tooling such as axe or Playwright before treating the app as a regulated production system.
 
 ## Manual QA Gate
 

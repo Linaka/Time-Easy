@@ -1,16 +1,43 @@
 import React from "react";
+import { cx } from "../classNames.js";
+import styles from "./RowActions.module.css";
 
-export function RowActions({ primaryLabel, primaryIcon: PrimaryIcon, primaryDisabled, onPrimary, secondaryLabel, secondaryIcon: SecondaryIcon, onSecondary }) {
+export function RowActions({
+  primaryLabel,
+  primaryAriaLabel,
+  primaryIcon: PrimaryIcon,
+  primaryDisabled,
+  primaryIntent = "default",
+  onPrimary,
+  secondaryLabel,
+  secondaryAriaLabel,
+  secondaryIcon: SecondaryIcon,
+  secondaryIntent = "default",
+  onSecondary
+}) {
+  const intentClasses = {
+    default: null,
+    success: styles["row-actions__button--success"],
+    warning: styles["row-actions__button--warning"],
+    danger: styles["row-actions__button--danger"],
+    info: styles["row-actions__button--info"]
+  };
+
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className={styles["row-actions"]}>
       {onPrimary ? (
         <button
           type="button"
           disabled={primaryDisabled}
           onClick={onPrimary}
-          className="focus-ring inline-flex min-h-9 items-center gap-1.5 rounded-full border border-transparent bg-black px-4 text-xs font-medium text-white hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-50"
+          aria-label={primaryAriaLabel}
+          className={cx(
+            styles["row-actions__button"],
+            styles["row-actions__button--primary"],
+            intentClasses[primaryIntent]
+          )}
         >
-          {PrimaryIcon ? <PrimaryIcon className="h-3.5 w-3.5" aria-hidden="true" /> : null}
+          {PrimaryIcon ? <PrimaryIcon className={styles["row-actions__icon"]} aria-hidden="true" /> : null}
           {primaryLabel}
         </button>
       ) : null}
@@ -18,9 +45,14 @@ export function RowActions({ primaryLabel, primaryIcon: PrimaryIcon, primaryDisa
         <button
           type="button"
           onClick={onSecondary}
-          className="focus-ring inline-flex min-h-9 items-center gap-1.5 rounded-full border border-transparent bg-brand-100 px-4 text-xs font-medium text-black hover:bg-brand-200"
+          aria-label={secondaryAriaLabel}
+          className={cx(
+            styles["row-actions__button"],
+            styles["row-actions__button--secondary"],
+            intentClasses[secondaryIntent]
+          )}
         >
-          {SecondaryIcon ? <SecondaryIcon className="h-3.5 w-3.5" aria-hidden="true" /> : null}
+          {SecondaryIcon ? <SecondaryIcon className={styles["row-actions__icon"]} aria-hidden="true" /> : null}
           {secondaryLabel}
         </button>
       ) : null}

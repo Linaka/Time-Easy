@@ -1,35 +1,48 @@
 import React from "react";
-import { DollarSign, ShieldCheck } from "lucide-react";
+import { PoundSterling, ShieldCheck } from "lucide-react";
 import { formatMargin } from "../../domain/formatters.js";
 import { projectStyle } from "../../domain/projectUtils.js";
+import { cx } from "../classNames.js";
+import styles from "./Badges.module.css";
 
-export function ProjectBadge({ project }) {
+export function ProjectBadge({ project, showMarker = true }) {
   const style = projectStyle(project);
   return (
-    <div className="flex min-w-0 items-center gap-2">
-      <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${style.dot}`} aria-hidden="true" />
-      <span className="sr-only">{project.name} project colour marker.</span>
-      <div className="min-w-0">
-        <p className={`truncate text-sm font-medium ${style.text}`}>{project.name}</p>
-        <p className="truncate text-xs text-[#5e5e5e]">{project.client}</p>
+    <div className={styles["project-badge"]}>
+      {showMarker ? (
+        <>
+          <span className={cx(styles["project-badge__marker"], style.dot)} aria-hidden="true" />
+          <span className={styles["project-badge__marker-label"]}>{project.name} project colour marker.</span>
+        </>
+      ) : null}
+      <div className={styles["project-badge__content"]}>
+        <p className={cx(styles["project-badge__name"], style.text)}>{project.name}</p>
+        <p className={styles["project-badge__client"]}>{project.client}</p>
       </div>
     </div>
   );
 }
 
-export function TagList({ tags, showEmpty = false }) {
+export function TagList({ tags, showEmpty = false, compact = false, plain = false }) {
   if (!tags?.length) {
     return showEmpty ? (
-      <span className="text-sm text-[#5e5e5e]">No tags</span>
+      <span className={styles["tag-list__empty"]}>No tags</span>
     ) : (
-      <span className="sr-only">No tags</span>
+      <span className={styles["tag-list__empty--hidden"]}>No tags</span>
     );
   }
 
   return (
-    <div className="flex flex-wrap gap-1.5">
+    <div className={styles["tag-list"]}>
       {tags.map((tag) => (
-        <span key={tag} className="rounded-full border border-transparent bg-brand-100 px-2.5 py-1 text-xs font-medium text-black">
+        <span
+          key={tag}
+          className={cx(
+            styles["tag-list__item"],
+            compact ? styles["tag-list__item--compact"] : null,
+            plain ? styles["tag-list__item--plain"] : null
+          )}
+        >
           {tag}
         </span>
       ))}
@@ -37,33 +50,39 @@ export function TagList({ tags, showEmpty = false }) {
   );
 }
 
-export function BillableBadge({ billable }) {
+export function BillableBadge({ billable, compact = false, plain = false }) {
   return (
-    <span className={`inline-flex min-h-8 items-center gap-1.5 rounded-full border px-2.5 text-xs font-semibold ${
-      billable ? "border-transparent bg-black text-white" : "border-transparent bg-brand-100 text-black"
-    }`}>
-      {billable ? <DollarSign className="h-3.5 w-3.5" aria-hidden="true" /> : <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />}
+    <span
+      className={cx(
+        styles.badge,
+        styles["badge--with-icon"],
+        compact ? styles["badge--compact"] : null,
+        plain ? styles["badge--plain"] : null,
+        billable ? styles["badge--positive"] : styles["badge--neutral"]
+      )}
+    >
+      {!plain && (billable ? <PoundSterling className={styles.badge__icon} aria-hidden="true" /> : <ShieldCheck className={styles.badge__icon} aria-hidden="true" />)}
       {billable ? "Billable" : "Internal"}
     </span>
   );
 }
 
-export function StatusBadge({ status }) {
+export function StatusBadge({ status, compact = false }) {
   const normalized = status || "Draft";
   const classes = {
-    Active: "border-transparent bg-black text-white",
-    Approved: "border-transparent bg-black text-white",
-    Paid: "border-transparent bg-black text-white",
-    Published: "border-transparent bg-black text-white",
-    Pending: "border-transparent bg-brand-100 text-black",
-    Planned: "border-transparent bg-brand-100 text-black",
-    Completed: "border-transparent bg-brand-100 text-black",
-    Archived: "border-transparent bg-brand-100 text-[#5e5e5e]",
-    Inactive: "border-transparent bg-brand-100 text-[#5e5e5e]",
-    Rejected: "border-transparent bg-brand-100 text-black"
+    Active: styles["badge--info"],
+    Approved: styles["badge--positive"],
+    Paid: styles["badge--positive"],
+    Published: styles["badge--info"],
+    Pending: styles["badge--warning"],
+    Planned: styles["badge--warning"],
+    Completed: styles["badge--positive"],
+    Archived: styles["badge--muted"],
+    Inactive: styles["badge--muted"],
+    Rejected: styles["badge--danger"]
   };
   return (
-    <span className={`inline-flex min-h-8 items-center rounded-full border px-2.5 text-xs font-semibold ${classes[normalized] || classes.Planned}`}>
+    <span className={cx(styles.badge, compact ? styles["badge--compact"] : null, classes[normalized] || classes.Planned)}>
       {normalized}
     </span>
   );
@@ -72,7 +91,7 @@ export function StatusBadge({ status }) {
 export function MarginBadge({ value }) {
   if (value === null) {
     return (
-      <span className="inline-flex min-h-8 items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 text-xs font-semibold text-slate-600">
+      <span className={cx(styles.badge, styles["badge--empty"])}>
         N/A
       </span>
     );
@@ -80,15 +99,15 @@ export function MarginBadge({ value }) {
 
   const classes =
     value >= 40
-      ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+      ? styles["badge--positive"]
       : value >= 20
-        ? "border-transparent bg-black text-white"
+        ? styles["badge--info"]
         : value >= 0
-          ? "border-amber-200 bg-amber-50 text-amber-800"
-          : "border-red-200 bg-red-50 text-red-700";
+          ? styles["badge--warning"]
+          : styles["badge--danger"];
 
   return (
-    <span className={`inline-flex min-h-8 items-center rounded-full border px-2.5 text-xs font-semibold ${classes}`}>
+    <span className={cx(styles.badge, classes)}>
       {formatMargin(value)}
     </span>
   );

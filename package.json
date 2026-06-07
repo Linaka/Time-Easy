@@ -7,10 +7,19 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
+    "tauri": "tauri",
+    "desktop:dev": "tauri dev",
+    "desktop:build:mac": "tauri build --bundles app",
+    "desktop:build:windows": "tauri build --bundles msi,nsis",
+    "desktop:build:windows:msi": "tauri build --bundles msi",
+    "desktop:build:windows:nsis": "tauri build --bundles nsis",
     "test": "node --test tests/*.test.js",
     "quality": "npm test && npm run build"
   },
   "dependencies": {
+    "@tauri-apps/api": "^2.11.0",
+    "@tauri-apps/plugin-dialog": "^2.7.1",
+    "@tauri-apps/plugin-fs": "^2.5.1",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "lucide-react": "^0.468.0",
@@ -19,5 +28,8 @@
     "react-dom": "^18.3.1",
     "tailwindcss": "^3.4.17",
     "vite": "^6.0.5"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.2"
   }
 }

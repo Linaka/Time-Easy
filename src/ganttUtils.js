@@ -64,7 +64,7 @@ export function buildGanttTimeline(timelineMode, startDateKey, todayKey = getLoc
     slots,
     startKey: slots[0].startKey,
     endKey: slots[slots.length - 1].endKey,
-    slotMinWidth: timelineMode === "Week" ? 132 : 124,
+    slotMinWidth: 112,
     rangeLabel: `${formatPlanningDate(slots[0].startKey)} - ${formatPlanningDate(slots[slots.length - 1].endKey)}`
   };
 }

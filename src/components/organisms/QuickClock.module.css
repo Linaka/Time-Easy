@@ -1,0 +1,60 @@
+.quick-clock {
+  @apply hidden min-h-12 items-center gap-1 rounded-full border border-brand-200 bg-brand-100 p-1 lg:flex;
+  background: var(--theme-surface-muted, #efefef);
+  border-color: var(--theme-border, #e2e2e2);
+}
+
+.quick-clock__label {
+  @apply sr-only;
+}
+
+.quick-clock__input {
+  @apply min-h-10 w-40 rounded-full border border-transparent bg-white px-4 text-sm text-black placeholder:text-slate-500;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black;
+  background: var(--theme-surface, #ffffff);
+  color: var(--theme-text, #000000);
+  outline-color: var(--theme-focus, #000000);
+}
+
+.quick-clock__input::placeholder {
+  color: var(--theme-placeholder, #64748b);
+}
+
+.quick-clock__select {
+  @apply min-h-10 w-44 rounded-full border border-transparent bg-white pl-4 pr-10 text-sm font-medium text-black xl:w-52;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black;
+  background-color: var(--theme-surface, #ffffff);
+  color: var(--theme-text, #000000);
+  outline-color: var(--theme-focus, #000000);
+}
+
+.quick-clock__timer {
+  @apply min-w-[86px] px-2 text-center font-mono text-sm font-bold tabular-nums text-slate-950;
+  color: var(--theme-strong, #020617);
+}
+
+.quick-clock__button {
+  @apply inline-flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-full px-4 text-xs font-medium;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black;
+  outline-color: var(--theme-focus, #000000);
+}
+
+.quick-clock__button--idle {
+  @apply bg-black text-white hover:bg-brand-800;
+  background: var(--theme-accent, #000000);
+  color: var(--theme-on-accent, #ffffff);
+}
+
+.quick-clock__button--idle:hover {
+  background: var(--theme-accent-hover, #282828);
+}
+
+.quick-clock__button--running {
+  @apply bg-brand-800 text-white;
+  background: var(--theme-accent-hover, #282828);
+  color: var(--theme-on-accent, #ffffff);
+}
+
+.quick-clock__button-icon {
+  @apply h-3.5 w-3.5;
+}

@@ -1,0 +1,177 @@
+.sidebar {
+  @apply border-b border-brand-200 bg-brand-100/70 lg:fixed lg:bottom-0 lg:left-0 lg:top-16 lg:w-[248px] lg:border-b-0 lg:border-r;
+  background: var(--theme-sidebar-bg, color-mix(in srgb, var(--theme-surface-muted, #efefef) 70%, transparent));
+  border-color: var(--theme-sidebar-border, var(--theme-border, #e2e2e2));
+}
+
+.sidebar--collapsed {
+  @apply lg:w-[72px];
+}
+
+.sidebar__nav {
+  @apply px-3 py-3 lg:h-full lg:overflow-y-auto lg:px-4 lg:py-5;
+}
+
+.sidebar--collapsed .sidebar__nav {
+  @apply lg:px-3 lg:py-4;
+}
+
+.sidebar__mobile-control {
+  @apply lg:hidden;
+}
+
+.sidebar__select-label {
+  @apply sr-only;
+}
+
+.sidebar__select {
+  @apply min-h-12 w-full rounded-md border border-transparent bg-white pl-4 pr-10 text-sm font-semibold text-black shadow-sm;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black;
+  background-color: var(--theme-surface, #ffffff);
+  color: var(--theme-text, #000000);
+  outline-color: var(--theme-focus, #000000);
+}
+
+.sidebar__desktop-nav {
+  @apply hidden lg:grid lg:gap-5;
+}
+
+.sidebar--collapsed .sidebar__desktop-nav {
+  @apply lg:justify-items-center lg:gap-2;
+}
+
+.sidebar__collapse-button {
+  composes: focus-ring from global;
+  @apply hidden min-h-10 items-center justify-center gap-2 rounded-md border border-transparent bg-white px-3 text-sm font-semibold text-black transition hover:bg-brand-50 lg:inline-flex;
+  background: var(--theme-surface, #ffffff);
+  color: var(--theme-text, #000000);
+}
+
+.sidebar__collapse-button:hover {
+  background: var(--theme-sidebar-hover, var(--theme-surface-muted, #efefef));
+}
+
+.sidebar--collapsed .sidebar__collapse-button {
+  @apply h-10 w-10 px-0;
+}
+
+.sidebar__collapse-icon {
+  @apply h-5 w-5;
+}
+
+.sidebar__collapse-label {
+  @apply whitespace-nowrap;
+}
+
+.sidebar--collapsed .sidebar__collapse-label {
+  @apply sr-only;
+}
+
+.sidebar__group {
+  @apply grid gap-1.5;
+}
+
+.sidebar--collapsed .sidebar__group {
+  @apply justify-items-center gap-1;
+}
+
+.sidebar__group-heading {
+  @apply relative;
+}
+
+.sidebar__group-button {
+  @apply flex min-h-8 w-full items-center justify-between gap-3 px-3 py-1 text-left text-black transition hover:text-slate-700;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black;
+  color: var(--theme-text, #000000);
+  outline-color: var(--theme-focus, #000000);
+}
+
+.sidebar__group-button:hover {
+  color: var(--theme-muted, #334155);
+}
+
+.sidebar__group-button--active {
+  @apply text-black;
+  color: var(--theme-strong, #000000);
+}
+
+.sidebar__group-label {
+  @apply block text-xs font-bold uppercase text-[#5e5e5e];
+  color: var(--theme-sidebar-heading, var(--theme-muted, #5e5e5e));
+}
+
+.sidebar__group-tooltip {
+  @apply pointer-events-none invisible absolute z-50 rounded-md bg-slate-950 px-3 py-2 text-xs font-semibold leading-5 text-white opacity-0 shadow-soft transition;
+  background: var(--theme-tooltip, #0f172a);
+  box-shadow: var(--theme-shadow, 0 4px 16px rgb(0 0 0 / 0.12));
+  color: var(--theme-tooltip-text, #ffffff);
+  left: 0.75rem;
+  max-width: 13rem;
+  top: calc(100% + 0.25rem);
+  width: max-content;
+}
+
+.sidebar__group-button:hover + .sidebar__group-tooltip,
+.sidebar__group-button:focus-visible + .sidebar__group-tooltip {
+  @apply visible opacity-100;
+}
+
+.sidebar__group-chevron {
+  @apply h-4 w-4 shrink-0 text-[#5e5e5e] transition-transform;
+  color: var(--theme-muted, #5e5e5e);
+}
+
+.sidebar__group-chevron--expanded {
+  @apply rotate-180;
+}
+
+.sidebar__items {
+  @apply grid gap-1;
+}
+
+.sidebar__items--expanded {
+  @apply pb-2;
+}
+
+.sidebar--collapsed .sidebar__items {
+  @apply gap-1 pb-0;
+}
+
+.sidebar__item {
+  @apply inline-flex min-h-10 shrink-0 items-center gap-3 rounded-md px-3 text-sm font-medium text-black transition hover:bg-white;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black;
+  color: var(--theme-text, #000000);
+  outline-color: var(--theme-focus, #000000);
+}
+
+.sidebar--collapsed .sidebar__item {
+  @apply h-10 w-10 justify-center gap-0 px-0;
+}
+
+.sidebar--collapsed .sidebar__item-label {
+  @apply sr-only;
+}
+
+.sidebar__item:hover {
+  background: var(--theme-sidebar-hover, var(--theme-surface, #ffffff));
+}
+
+.sidebar__item--active {
+  @apply border border-transparent bg-black text-white hover:bg-black;
+  background: var(--theme-accent, #000000);
+  color: var(--theme-on-accent, #ffffff);
+}
+
+.sidebar__item--active:hover {
+  background: var(--theme-accent-hover, #000000);
+}
+
+.sidebar__icon {
+  @apply h-5 w-5 text-[#5e5e5e];
+  color: var(--theme-sidebar-heading, var(--theme-muted, #5e5e5e));
+}
+
+.sidebar__icon--active {
+  @apply text-white;
+  color: var(--theme-on-accent, #ffffff);
+}

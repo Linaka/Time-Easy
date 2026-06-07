@@ -1,0 +1,11 @@
+.kiosks-page__style-001 {
+  @apply grid gap-5 2xl:grid-cols-[360px_minmax(0,1fr)];
+}
+
+.kiosks-page__style-002 {
+  @apply grid gap-4 p-4 sm:p-5;
+}
+
+.kiosks-page__style-003 {
+  @apply font-mono font-bold;
+}

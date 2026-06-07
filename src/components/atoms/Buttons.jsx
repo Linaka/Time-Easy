@@ -1,26 +1,44 @@
 import React from "react";
+import { cx } from "../classNames.js";
+import styles from "./Buttons.module.css";
 
-export function PrimaryButton({ type = "button", icon: Icon, onClick, children }) {
+export function PrimaryButton({ type = "button", icon: Icon, onClick, children, className, ...buttonProps }) {
   return (
     <button
       type={type}
       onClick={onClick}
-      className="focus-ring inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-brand-600 px-5 text-sm font-medium text-white hover:bg-brand-800"
+      className={cx(styles.button, styles["button--primary"], className)}
+      {...buttonProps}
     >
-      {Icon ? <Icon className="h-4 w-4" aria-hidden="true" /> : null}
+      {Icon ? <Icon className={styles.button__icon} aria-hidden="true" /> : null}
       {children}
     </button>
   );
 }
 
-export function GhostButton({ icon: Icon, onClick, children }) {
+export function GhostButton({ icon: Icon, onClick, children, className, ...buttonProps }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-transparent bg-brand-100 px-4 text-sm font-medium text-black hover:bg-brand-200"
+      className={cx(styles.button, styles["button--ghost"], className)}
+      {...buttonProps}
     >
-      {Icon ? <Icon className="h-4 w-4" aria-hidden="true" /> : null}
+      {Icon ? <Icon className={styles.button__icon} aria-hidden="true" /> : null}
+      {children}
+    </button>
+  );
+}
+
+export function DangerButton({ type = "button", icon: Icon, onClick, children, className, ...buttonProps }) {
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      className={cx(styles.button, styles["button--danger"], className)}
+      {...buttonProps}
+    >
+      {Icon ? <Icon className={styles.button__icon} aria-hidden="true" /> : null}
       {children}
     </button>
   );

@@ -16,6 +16,7 @@ Creative Operations is a browser-based time tracking dashboard prototype with a 
 - Projects and Team: create/archive projects, filter by client/custom tags, add/delete members, manage capacity/status, and four editable GBP employment grades with increasing hourly rates.
 - Top bar utilities: settings, notifications, help, and profile open accessible action panels.
 - Quick clock: persistent quick start/stop tracking is available from the header on wide screens and a compact panel on narrower screens.
+- Production guardrails: role-based navigation, redacted client diagnostics, optional same-origin telemetry delivery, deploy security headers, static accessibility/security checks, and CI quality gates.
 
 ## Run
 
@@ -23,6 +24,28 @@ Creative Operations is a browser-based time tracking dashboard prototype with a 
 npm install
 npm run dev
 ```
+
+## Desktop App
+
+Creative Operations ships through a Tauri desktop shell.
+
+```bash
+npm run desktop:dev
+```
+
+Build the macOS app bundle from macOS:
+
+```bash
+npm run desktop:build:mac
+```
+
+Build the Windows MSI and NSIS installers from Windows:
+
+```bash
+npm run desktop:build:windows
+```
+
+The Windows artifacts are written under `src-tauri/target/release/bundle/msi/` and `src-tauri/target/release/bundle/nsis/`. The `Windows Desktop Build` GitHub Actions workflow can also package those installers from a `v*` tag or a manual workflow dispatch.
 
 ## Test
 
@@ -37,6 +60,7 @@ npm run quality
 This project follows the Future Software Development Playbook for SOLID React structure, separation of concerns, atomic design, accessibility, security, observability, and release readiness.
 
 - Compliance notes: [docs/playbook-compliance.md](docs/playbook-compliance.md)
+- Production readiness: [docs/production-readiness.md](docs/production-readiness.md)
 - Architecture decision record: [docs/adr/0001-frontend-architecture.md](docs/adr/0001-frontend-architecture.md)
 - Pull request checklist: [.github/pull_request_template.md](.github/pull_request_template.md)
 
@@ -46,6 +70,7 @@ Core boundaries:
 - `src/hooks`: shared stateful orchestration.
 - `src/domain`: pure business rules, formatting, validation, and transformations.
 - `src/services`: infrastructure-style concerns such as safe client logging.
+- `.github/workflows/quality.yml`: CI gate for tests, build, and dependency audit.
 - `tests`: deterministic regression tests for domain, utility, and security rules.
 
 ## Accessibility Checklist
@@ -61,6 +86,7 @@ Core boundaries:
 - Workspace changes announce status updates through a polite live region.
 - Tables include headers and row actions use explicit accessible names.
 - Gantt assignments support drag-and-drop plus labelled icon buttons that open keyboard-accessible project and planning-period menus.
+- Route changes update document title and keyboard focus for screen-reader orientation.
 
 ## Security Checklist
 
@@ -69,8 +95,11 @@ Core boundaries:
 - User-provided names, notes, tags, and descriptions reject script-like text before saving.
 - CSV export escapes cells and prefixes spreadsheet-formula-like values.
 - Dependency notes and schedule/project edits reject script-like text before saving.
-- Client error logs redact sensitive context fields before writing diagnostics.
-- App state is stored in localStorage only; no secrets, tokens, analytics scripts, or external API calls are used.
+- Client error logs redact sensitive context fields before writing diagnostics or optional same-origin telemetry.
+- Static security headers define CSP, frame blocking, content sniffing protection, referrer policy, and browser permissions policy.
+- Role-based access rules gate navigation and utility settings in the browser; server-side enforcement remains a backend requirement.
+- App state is stored in localStorage only; no secrets, tokens, analytics scripts, or external API calls are used by default.
+- Set `VITE_TELEMETRY_ENDPOINT` to a same-origin endpoint such as `/telemetry` to receive redacted client diagnostics in production.
 - No third-party assets or proprietary branding are embedded.
 
 ## Manual QA Notes

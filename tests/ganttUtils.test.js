@@ -20,7 +20,7 @@ test("builds day-based week and month Gantt timelines", () => {
   const month = buildGanttTimeline("Month", "2026-05-16", "2026-05-16");
   assert.equal(month.slots.length, 31);
   assert.equal(month.endKey, "2026-06-15");
-  assert.equal(month.slotMinWidth, 124);
+  assert.equal(month.slotMinWidth, 112);
 });
 
 test("builds month-bucketed year Gantt timeline", () => {

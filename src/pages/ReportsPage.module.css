@@ -1,0 +1,123 @@
+.reports-page__style-001 {
+  @apply grid gap-5;
+}
+
+.reports-page__style-002 {
+  @apply grid gap-4 md:grid-cols-2 xl:grid-cols-4;
+}
+
+.reports-page__style-003 {
+  @apply font-mono font-bold text-slate-950;
+}
+
+.reports-page__style-004 {
+  @apply mt-1 text-xs text-slate-600;
+}
+
+.reports-page__style-005 {
+  @apply font-mono font-semibold text-slate-950;
+}
+
+.reports-page__style-006 {
+  @apply font-mono font-semibold text-slate-950;
+}
+
+.reports-page__style-007 {
+  @apply font-mono font-bold text-slate-950;
+}
+
+.reports-page__style-008 {
+  @apply mt-1 text-xs text-slate-600;
+}
+
+.reports-page__style-009 {
+  @apply mb-2 flex items-center justify-between gap-3 text-xs font-semibold text-slate-600;
+}
+
+.reports-page__style-010 {
+  @apply h-2.5 overflow-hidden rounded-full bg-slate-100;
+}
+
+.reports-page__style-011 {
+  @apply grid gap-5 xl:grid-cols-[360px_minmax(0,1fr)];
+}
+
+.reports-page__style-012 {
+  @apply space-y-4 p-4 sm:p-5;
+}
+
+.reports-page__style-013 {
+  @apply grid grid-cols-2 gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm;
+}
+
+.reports-page__style-014 {
+  @apply text-slate-600;
+}
+
+.reports-page__style-015 {
+  @apply mt-1 font-mono font-bold text-slate-950;
+}
+
+.reports-page__style-016 {
+  @apply text-slate-600;
+}
+
+.reports-page__style-017 {
+  @apply mt-1 font-mono font-bold text-slate-950;
+}
+
+.reports-page__style-018 {
+  @apply mb-2 flex justify-between gap-3 text-sm;
+}
+
+.reports-page__style-019 {
+  @apply font-mono font-semibold;
+}
+
+.reports-page__style-020 {
+  @apply h-3 overflow-hidden rounded-full bg-slate-100;
+}
+
+.reports-page__style-021 {
+  @apply font-semibold text-slate-950;
+}
+
+.reports-page__style-022 {
+  @apply flex flex-wrap gap-2;
+}
+
+.reports-page__style-023 {
+  @apply grid gap-4 p-4 sm:grid-cols-2 sm:p-5 xl:grid-cols-4;
+}
+
+.reports-page__style-024 {
+  composes: input from global;
+}
+
+.reports-page__style-025 {
+  composes: input from global;
+}
+
+.reports-page__style-026 {
+  @apply border-t border-brand-100 bg-brand-50 px-4 py-3 sm:px-5;
+}
+
+.reports-page__style-027 {
+  @apply text-xs font-bold uppercase text-[#5e5e5e];
+}
+
+.reports-page__style-028 {
+  @apply mt-2 flex flex-wrap gap-2;
+}
+
+.reports-page__style-029 {
+  @apply rounded-full border border-brand-200 bg-white px-3 py-1 text-xs font-medium text-black;
+}
+
+.reports-page__style-030 {
+  @apply text-sm text-[#5e5e5e];
+}
+
+.reports-page__progress-fill {
+  @apply h-full rounded-full;
+}

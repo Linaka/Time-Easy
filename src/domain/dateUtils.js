@@ -1,18 +1,28 @@
-export function getCurrentWeekDays() {
-  const today = new Date();
+function describeCalendarDay(date, today) {
+  const dateKey = getLocalDateKey(date);
+  return {
+    date,
+    dateKey,
+    shortName: new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(date),
+    displayDate: new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date),
+    isToday: dateKey === getLocalDateKey(today)
+  };
+}
+
+export function getCurrentWeekDays(today = new Date()) {
   const mondayOffset = (today.getDay() + 6) % 7;
   const monday = addDays(today, -mondayOffset);
 
   return Array.from({ length: 7 }, (_, index) => {
     const date = addDays(monday, index);
-    const dateKey = getLocalDateKey(date);
-    return {
-      date,
-      dateKey,
-      shortName: new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(date),
-      displayDate: new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date),
-      isToday: dateKey === getLocalDateKey(today)
-    };
+    return describeCalendarDay(date, today);
+  });
+}
+
+export function getRollingWeekDays(today = new Date()) {
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = addDays(today, index);
+    return describeCalendarDay(date, today);
   });
 }
 

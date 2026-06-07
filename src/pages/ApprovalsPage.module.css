@@ -1,0 +1,11 @@
+.approvals-page__style-001 {
+  @apply grid gap-5;
+}
+
+.approvals-page__style-002 {
+  @apply grid gap-4 md:grid-cols-3;
+}
+
+.approvals-page__style-003 {
+  @apply font-semibold text-slate-950;
+}
