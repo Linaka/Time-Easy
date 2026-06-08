@@ -102,15 +102,61 @@
   @apply flex items-end gap-3;
 }
 
-.timesheet-page__style-019 {
-  @apply focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-black inline-flex min-h-11 items-center gap-2 rounded-full border border-transparent bg-brand-100 px-4 text-sm font-medium text-black;
-  background: var(--theme-surface-muted, #efefef);
-  color: var(--theme-text, #000000);
-  outline-color: var(--theme-focus, #000000);
+.timesheet-page__icon-action {
+  @apply relative inline-flex;
 }
 
-.timesheet-page__checkbox[type="checkbox"] {
-  @apply shrink-0;
+.timesheet-page__billable-action {
+  composes: focus-ring from global;
+  @apply inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full border border-transparent transition;
+}
+
+.timesheet-page__billable-action--active {
+  @apply bg-brand-100 text-black hover:bg-brand-200;
+  background: var(--theme-surface-muted, #efefef);
+  color: var(--theme-text, #000000);
+}
+
+.timesheet-page__billable-action--active:hover {
+  background: var(--theme-border-soft, #e2e2e2);
+}
+
+.timesheet-page__billable-action--idle {
+  @apply bg-white text-slate-500 hover:bg-brand-100;
+  color: var(--theme-muted, #64748b);
+}
+
+.timesheet-page__billable-action--idle:hover {
+  background: var(--theme-surface-muted, #efefef);
+}
+
+.timesheet-page__billable-input[type="checkbox"] {
+  @apply sr-only;
+}
+
+.timesheet-page__billable-icon {
+  @apply h-4 w-4;
+}
+
+.timesheet-page__action-tooltip {
+  @apply pointer-events-none invisible absolute right-0 top-[calc(100%+0.5rem)] z-50 grid w-64 gap-1 rounded-md bg-slate-950 px-3 py-2 text-left text-xs leading-5 text-white opacity-0 shadow-soft transition;
+  background: var(--theme-tooltip, #0f172a);
+  box-shadow: var(--theme-shadow, 0 4px 16px rgb(0 0 0 / 0.12));
+  color: var(--theme-tooltip-text, #ffffff);
+}
+
+.timesheet-page__billable-action:hover + .timesheet-page__action-tooltip,
+.timesheet-page__billable-action:focus-within + .timesheet-page__action-tooltip,
+.timesheet-page__billable-action:focus-visible + .timesheet-page__action-tooltip {
+  @apply visible opacity-100;
+}
+
+.timesheet-page__action-tooltip-title {
+  @apply font-bold;
+}
+
+.timesheet-page__action-tooltip-description {
+  @apply font-medium;
 }
 
 .timesheet-page__style-020 {

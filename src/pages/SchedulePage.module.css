@@ -26,6 +26,10 @@
   @apply flex items-end;
 }
 
+.schedule-page__resource-plan-actions {
+  @apply flex flex-wrap items-center justify-end gap-2;
+}
+
 .schedule-page__table-select {
   @apply min-w-32;
 }
@@ -421,7 +425,7 @@
 }
 
 .schedule-page__slot-bucket--filled {
-  @apply border-slate-300 bg-white shadow-sm;
+  @apply border-transparent bg-transparent p-0 shadow-none;
 }
 
 .schedule-page__slot-bucket--empty {
@@ -429,7 +433,7 @@
 }
 
 .schedule-page__assignment-card {
-  @apply relative w-full min-w-0 max-w-full overflow-hidden rounded-md border p-2 shadow-sm;
+  @apply relative min-h-24 w-full min-w-0 max-w-full overflow-hidden rounded-md border p-2 shadow-sm;
 }
 
 .schedule-page__assignment-title {

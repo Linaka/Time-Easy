@@ -13,10 +13,10 @@ import {
   DateInput,
   FormField,
   GhostButton,
+  IconTooltipButton,
   MarginBadge,
   MetricCard,
   Panel,
-  PrimaryButton,
   ProjectBadge,
   Select,
   StatusBadge
@@ -110,7 +110,15 @@ export function ReportsPage({
       <Panel
         title="Project performance by filter"
         subtitle="Budget, scheduled time, actual time spent, actual cost, and margin update from the active filters."
-        action={<PrimaryButton onClick={exportCsv} icon={Download}>Export CSV</PrimaryButton>}
+        action={
+          <IconTooltipButton
+            onClick={exportCsv}
+            icon={Download}
+            label="Export project performance CSV"
+            title="Export CSV."
+            description="Download the current project performance table as a CSV file."
+          />
+        }
       >
         <DataTable
           columns={["Project", "Budget", "Scheduled time", "Actual time spent", "Actual cost", "Margin %", "Budget used"]}
@@ -216,7 +224,13 @@ function ReportFiltersPanel({
               Clear filters
             </GhostButton>
           ) : null}
-          <GhostButton onClick={exportCsv} icon={Download}>Export CSV</GhostButton>
+          <IconTooltipButton
+            onClick={exportCsv}
+            icon={Download}
+            label="Export report CSV"
+            title="Export CSV."
+            description="Download the filtered report entries and summary data as a CSV file."
+          />
         </div>
       }
     >

@@ -9,8 +9,8 @@ import {
   DateInput,
   FormField,
   Panel,
-  PrimaryButton,
-  Select
+  Select,
+  TimeInput
 } from "../components/ui.jsx";
 import { cx } from "../components/classNames.js";
 import {
@@ -108,11 +108,32 @@ export function CalendarPage({
           <FormField label="Person" htmlFor="calendar-person"><Select id="calendar-person" value={form.memberId} onChange={(value) => setFormValue(setForm, "memberId", value)}>{teamMembers.map((member) => <option key={member.id} value={member.id}>{member.name}</option>)}</Select></FormField>
           <FormField label="Project" htmlFor="calendar-project"><Select id="calendar-project" value={form.projectId} onChange={(value) => setFormValue(setForm, "projectId", value)}>{projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</Select></FormField>
           <FormField label="Date" htmlFor="calendar-date"><DateInput id="calendar-date" value={form.dateKey} onChange={(value) => setFormValue(setForm, "dateKey", value)} className={styles["calendar-page__style-008"]} /></FormField>
-          <FormField label="Start" htmlFor="calendar-start"><input id="calendar-start" type="time" value={form.start} onChange={(event) => setFormValue(setForm, "start", event.target.value)} className={styles["calendar-page__style-009"]} /></FormField>
-          <FormField label="End" htmlFor="calendar-end"><input id="calendar-end" type="time" value={form.end} onChange={(event) => setFormValue(setForm, "end", event.target.value)} className={styles["calendar-page__style-010"]} /></FormField>
+          <FormField label="Start" htmlFor="calendar-start"><TimeInput id="calendar-start" value={form.start} onChange={(value) => setFormValue(setForm, "start", value)} className={styles["calendar-page__style-009"]} /></FormField>
+          <FormField label="End" htmlFor="calendar-end"><TimeInput id="calendar-end" value={form.end} onChange={(value) => setFormValue(setForm, "end", value)} className={styles["calendar-page__style-010"]} /></FormField>
           <FormField label="Label" htmlFor="calendar-location"><input id="calendar-location" value={form.location} onChange={(event) => setFormValue(setForm, "location", event.target.value)} className={styles["calendar-page__style-011"]} /></FormField>
           <div className={styles["calendar-page__style-012"]}>
-            <PrimaryButton type="submit" icon={Plus}>Add block</PrimaryButton>
+            <div className={styles["calendar-page__add-block-action"]}>
+              <button
+                type="submit"
+                className={styles["calendar-page__add-block-button"]}
+                aria-label="Add week-ahead block"
+                aria-describedby="calendar-add-block-tooltip"
+              >
+                <Plus className={styles["calendar-page__add-block-icon"]} aria-hidden="true" />
+              </button>
+              <span
+                id="calendar-add-block-tooltip"
+                role="tooltip"
+                className={styles["calendar-page__add-block-tooltip"]}
+              >
+                <span className={styles["calendar-page__add-block-tooltip-title"]}>
+                  Add block.{" "}
+                </span>
+                <span className={styles["calendar-page__add-block-tooltip-description"]}>
+                  Create a week-ahead schedule block for the selected person, project, date, and time.
+                </span>
+              </span>
+            </div>
           </div>
         </form>
       </Panel>
@@ -342,11 +363,10 @@ function EditableCalendarScheduleItem({ item, projects, teamMembers, onUpdateSch
             <label className={styles["calendar-page__style-037"]} htmlFor={`${item.id}-calendar-start`}>
               Start time
             </label>
-            <input
+            <TimeInput
               id={`${item.id}-calendar-start`}
-              type="time"
               value={draft.start}
-              onChange={(event) => setFormValue(setDraft, "start", event.target.value)}
+              onChange={(value) => setFormValue(setDraft, "start", value)}
               className={styles["calendar-page__style-038"]}
             />
           </div>
@@ -354,11 +374,10 @@ function EditableCalendarScheduleItem({ item, projects, teamMembers, onUpdateSch
             <label className={styles["calendar-page__style-039"]} htmlFor={`${item.id}-calendar-end`}>
               End time
             </label>
-            <input
+            <TimeInput
               id={`${item.id}-calendar-end`}
-              type="time"
               value={draft.end}
-              onChange={(event) => setFormValue(setDraft, "end", event.target.value)}
+              onChange={(value) => setFormValue(setDraft, "end", value)}
               className={styles["calendar-page__style-040"]}
             />
           </div>

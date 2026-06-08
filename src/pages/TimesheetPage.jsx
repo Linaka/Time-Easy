@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
-  Download,
   Plus,
+  PoundSterling,
   Search,
   Upload,
   X
@@ -11,11 +11,13 @@ import {
   DateInput,
   FormField,
   GhostButton,
+  IconTooltipButton,
   Panel,
   PrimaryButton,
   ProjectBadge,
   Select
 } from "../components/ui.jsx";
+import { cx } from "../components/classNames.js";
 import {
   parseDurationInput,
   sumDurations
@@ -228,16 +230,48 @@ export function TimesheetPage({
             <input id="timesheet-duration" value={form.duration} onChange={(event) => setFormValue(setForm, "duration", event.target.value)} className={styles["timesheet-page__style-017"]} />
           </FormField>
           <div className={styles["timesheet-page__style-018"]}>
-            <label className={styles["timesheet-page__style-019"]}>
-              <input
-                type="checkbox"
-                checked={form.billable}
-                onChange={(event) => setFormValue(setForm, "billable", event.target.checked)}
-                className={styles["timesheet-page__checkbox"]}
-              />
-              Billable
-            </label>
-            <PrimaryButton type="submit" icon={Plus}>Add</PrimaryButton>
+            <span className={styles["timesheet-page__icon-action"]}>
+              <label
+                className={cx(
+                  styles["timesheet-page__billable-action"],
+                  form.billable
+                    ? styles["timesheet-page__billable-action--active"]
+                    : styles["timesheet-page__billable-action--idle"]
+                )}
+                aria-describedby="timesheet-billable-tooltip"
+              >
+                <input
+                  type="checkbox"
+                  checked={form.billable}
+                  onChange={(event) => setFormValue(setForm, "billable", event.target.checked)}
+                  className={styles["timesheet-page__billable-input"]}
+                  aria-label="Mark timesheet row as billable"
+                />
+                <PoundSterling className={styles["timesheet-page__billable-icon"]} aria-hidden="true" />
+              </label>
+              <span
+                id="timesheet-billable-tooltip"
+                role="tooltip"
+                className={styles["timesheet-page__action-tooltip"]}
+              >
+                <span className={styles["timesheet-page__action-tooltip-title"]}>
+                  {form.billable ? "Billable." : "Non-billable."}
+                </span>
+                <span className={styles["timesheet-page__action-tooltip-description"]}>
+                  {form.billable
+                    ? "This row will be included in billable client reporting."
+                    : "This row will be tracked as non-billable time."}
+                </span>
+              </span>
+            </span>
+            <IconTooltipButton
+              type="submit"
+              variant="primary"
+              icon={Plus}
+              label="Add timesheet row"
+              title="Add row."
+              description="Create a pending timesheet entry with the selected task, project, person, date, duration, and billing state."
+            />
           </div>
         </form>
       </Panel>
@@ -246,17 +280,18 @@ export function TimesheetPage({
         title="Import timesheet CSV"
         subtitle="Upload or paste rows with Date, Task, Project, Member, Duration, Billable, and Tags columns."
         action={
-          <GhostButton
-            icon={Download}
+          <IconTooltipButton
+            icon={Upload}
+            label="Load sample CSV"
+            title="Load sample CSV."
+            description="Fill the CSV field with an example timesheet row to preview the import format."
             onClick={() => {
               setImportText(
                 "Date,Task,Project,Member,Duration,Billable,Tags\n2026-05-15,Imported design review,ACME,Ava Morgan,1:30,yes,Timesheet import"
               );
               setImportFileName("");
             }}
-          >
-            Load sample
-          </GhostButton>
+          />
         }
       >
         <div className={styles["timesheet-page__style-020"]}>

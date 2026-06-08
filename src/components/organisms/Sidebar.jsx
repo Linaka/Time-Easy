@@ -44,10 +44,11 @@ export function Sidebar({
   activeSection,
   collapsed = false,
   currentUser,
+  workspaceSettings,
   onNavigate,
   onToggleCollapsed
 }) {
-  const permittedNavGroups = filterNavigationGroups(navGroups, currentUser);
+  const permittedNavGroups = filterNavigationGroups(navGroups, currentUser, workspaceSettings);
   const activeGroupLabel = useMemo(
     () => permittedNavGroups.find((group) =>
       group.items.some((item) => item.label === activeSection)

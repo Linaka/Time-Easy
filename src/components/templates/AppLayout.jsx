@@ -11,8 +11,6 @@ import { WORKSPACE_THEME_IDS } from "../../domain/appConfig.js";
 import { sectionUsesQuickClock } from "../../domain/sections.js";
 import styles from "./AppLayout.module.css";
 
-const SIDEBAR_COLLAPSED_STORAGE_KEY = "creative-operations-sidebar-collapsed";
-
 export function AppLayout({
   children,
   guidance,
@@ -45,13 +43,7 @@ export function AppLayout({
   } = metrics;
   const headingRef = useRef(null);
   const hasMountedRef = useRef(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
-    if (typeof window === "undefined") {
-      return false;
-    }
-
-    return window.localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY) === "true";
-  });
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     document.title = `${activeSection} | Creative Operations`;
@@ -63,10 +55,6 @@ export function AppLayout({
 
     hasMountedRef.current = true;
   }, [activeSection]);
-
-  useEffect(() => {
-    window.localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, String(sidebarCollapsed));
-  }, [sidebarCollapsed]);
 
   const showQuickClockPanel = sectionUsesQuickClock(activeSection);
   const themeClassName = {
@@ -132,6 +120,7 @@ export function AppLayout({
           activeSection={activeSection}
           collapsed={sidebarCollapsed}
           currentUser={currentUser}
+          workspaceSettings={workspaceSettings}
           onNavigate={onNavigate}
           onToggleCollapsed={() => setSidebarCollapsed((current) => !current)}
         />

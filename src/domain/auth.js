@@ -8,6 +8,11 @@ import {
   SECTION_DEFINITIONS,
   getSectionPermission
 } from "./sections.js";
+import {
+  DEFAULT_TEAM_CAPACITY_HOURS,
+  isWorkspaceFeatureEnabled,
+  workspaceFeatureForSection
+} from "./appConfig.js";
 
 export { ACCESS_ROLES, PERMISSIONS, ROLE_PERMISSIONS };
 
@@ -24,7 +29,7 @@ export const EMPTY_WORKSPACE_OWNER = Object.freeze({
   role: "Workspace owner",
   accessRole: "Owner",
   status: "Active",
-  capacityHours: 40,
+  capacityHours: DEFAULT_TEAM_CAPACITY_HOURS,
   gradeId: "grade-4"
 });
 
@@ -71,31 +76,36 @@ export function canPerform(user, permission) {
   return getRolePermissions(getAccessRole(user)).includes(permission);
 }
 
-export function canAccessSection(user, section) {
-  const permission = getSectionPermission(section);
-  return permission ? canPerform(user, permission) : false;
+export function isSectionEnabled(section, workspaceSettings) {
+  const feature = workspaceFeatureForSection(section);
+  return feature ? isWorkspaceFeatureEnabled(workspaceSettings, feature.id) : true;
 }
 
-export function filterNavigationGroups(groups, user) {
+export function canAccessSection(user, section, workspaceSettings) {
+  const permission = getSectionPermission(section);
+  return permission ? canPerform(user, permission) && isSectionEnabled(section, workspaceSettings) : false;
+}
+
+export function filterNavigationGroups(groups, user, workspaceSettings) {
   return groups
     .map((group) => ({
       ...group,
-      items: group.items.filter((item) => canAccessSection(user, item.label))
+      items: group.items.filter((item) => canAccessSection(user, item.label, workspaceSettings))
     }))
     .filter((group) => group.items.length > 0);
 }
 
-export function firstAccessibleSection(user, fallback = DEFAULT_SECTION) {
-  if (canAccessSection(user, fallback)) {
+export function firstAccessibleSection(user, fallback = DEFAULT_SECTION, workspaceSettings) {
+  if (canAccessSection(user, fallback, workspaceSettings)) {
     return fallback;
   }
 
-  if (canAccessSection(user, DEFAULT_SECTION)) {
+  if (canAccessSection(user, DEFAULT_SECTION, workspaceSettings)) {
     return DEFAULT_SECTION;
   }
 
   return (
-    SECTION_DEFINITIONS.find((section) => canAccessSection(user, section.id))?.id ||
+    SECTION_DEFINITIONS.find((section) => canAccessSection(user, section.id, workspaceSettings))?.id ||
     DEFAULT_SECTION
   );
 }

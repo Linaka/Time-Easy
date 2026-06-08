@@ -3,6 +3,7 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
+  Download,
   GitBranch,
   Plus,
   Trash2
@@ -11,19 +12,26 @@ import {
   DangerButton,
   DateInput,
   FormField,
+  IconTooltipButton,
   Panel,
   PrimaryButton,
   ProjectBadge,
-  Select
+  Select,
+  TimeInput
 } from "../../components/ui.jsx";
 import { cx } from "../../components/classNames.js";
 import { formatDurationLabel } from "../../domain/formatters.js";
+import {
+  buildResourcePlanExcelFilename,
+  buildResourcePlanExcelXml
+} from "../../domain/resourcePlanExcel.js";
 import { setFormValue } from "../../domain/formUtils.js";
 import {
   getProject,
   projectName
 } from "../../domain/projectUtils.js";
 import { scheduleDurationSeconds } from "../../domain/scheduleUtils.js";
+import { downloadTextFile } from "../../services/desktopBridge.js";
 import { scheduleItemIntersectsSlot } from "../../ganttUtils.js";
 import { GanttAssignmentCard } from "./GanttAssignmentCard.jsx";
 import { useGanttPlanner } from "./useGanttPlanner.js";
@@ -52,14 +60,44 @@ export function GanttChart({
     weekDays
   });
 
+  function handleExportResourcePlan() {
+    const workbookXml = buildResourcePlanExcelXml({
+      assignedSeconds: planner.assignedSeconds,
+      projectDependencies,
+      projects,
+      teamMembers,
+      timeline: planner.timeline,
+      timelineMode: planner.timelineMode,
+      timelineScheduleItems: planner.timelineScheduleItems
+    });
+
+    downloadTextFile({
+      filename: buildResourcePlanExcelFilename({
+        timeline: planner.timeline,
+        timelineMode: planner.timelineMode
+      }),
+      mimeType: "application/vnd.ms-excel;charset=utf-8",
+      text: workbookXml
+    });
+  }
+
   return (
     <Panel
       title="Resource plan"
       subtitle="Drag people between project lanes, then switch the timeline to plan the week, month, or year ahead."
       action={
-        <div className={styles["schedule-page__style-008"]}>
-          <GitBranch className={styles["schedule-page__style-009"]} aria-hidden="true" />
-          <span>{formatDurationLabel(planner.assignedSeconds)} scheduled</span>
+        <div className={styles["schedule-page__resource-plan-actions"]}>
+          <div className={styles["schedule-page__style-008"]}>
+            <GitBranch className={styles["schedule-page__style-009"]} aria-hidden="true" />
+            <span>{formatDurationLabel(planner.assignedSeconds)} scheduled</span>
+          </div>
+          <IconTooltipButton
+            onClick={handleExportResourcePlan}
+            icon={Download}
+            label="Export resource plan Excel"
+            title="Export Excel."
+            description="Download the visible resource plan as an Excel-compatible workbook."
+          />
         </div>
       }
     >
@@ -267,8 +305,8 @@ export function GanttChart({
             <FormField label="Project" htmlFor="gantt-plan-project"><Select id="gantt-plan-project" value={planner.planForm.projectId} onChange={(value) => setFormValue(planner.setPlanForm, "projectId", value)}>{projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</Select></FormField>
             <FormField label="Period" htmlFor="gantt-plan-period"><Select id="gantt-plan-period" value={planner.planForm.slotKey} onChange={(value) => setFormValue(planner.setPlanForm, "slotKey", value)}>{planner.timeline.slots.map((slot) => <option key={slot.key} value={slot.key}>{slot.selectLabel}</option>)}</Select></FormField>
             <div className={styles["schedule-page__style-041"]}>
-              <FormField label="Start" htmlFor="gantt-plan-start"><input id="gantt-plan-start" type="time" value={planner.planForm.start} onChange={(event) => setFormValue(planner.setPlanForm, "start", event.target.value)} className={styles["schedule-page__style-042"]} /></FormField>
-              <FormField label="End" htmlFor="gantt-plan-end"><input id="gantt-plan-end" type="time" value={planner.planForm.end} onChange={(event) => setFormValue(planner.setPlanForm, "end", event.target.value)} className={styles["schedule-page__style-043"]} /></FormField>
+              <FormField label="Start" htmlFor="gantt-plan-start"><TimeInput id="gantt-plan-start" value={planner.planForm.start} onChange={(value) => setFormValue(planner.setPlanForm, "start", value)} className={styles["schedule-page__style-042"]} /></FormField>
+              <FormField label="End" htmlFor="gantt-plan-end"><TimeInput id="gantt-plan-end" value={planner.planForm.end} onChange={(value) => setFormValue(planner.setPlanForm, "end", value)} className={styles["schedule-page__style-043"]} /></FormField>
             </div>
             <FormField label="Label" htmlFor="gantt-plan-location" helper="Plain text only."><input id="gantt-plan-location" value={planner.planForm.location} onChange={(event) => setFormValue(planner.setPlanForm, "location", event.target.value)} className={styles["schedule-page__style-044"]} /></FormField>
             <PrimaryButton type="submit" icon={Plus}>Add to plan</PrimaryButton>

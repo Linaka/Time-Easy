@@ -9,6 +9,7 @@ import {
   PERMISSIONS,
   resolveCurrentUser
 } from "../src/domain/auth.js";
+import { DEFAULT_WORKSPACE_SETTINGS } from "../src/domain/appConfig.js";
 
 test("owner can access every product section and workspace settings", () => {
   const owner = { id: "ava", accessRole: "Owner" };
@@ -40,6 +41,27 @@ test("navigation groups remove inaccessible sections", () => {
 
 test("fallback section chooses the first permitted workflow", () => {
   assert.equal(firstAccessibleSection({ accessRole: "Member" }, "Reports"), "Time Tracker");
+});
+
+test("workspace feature settings disable sections for the whole team", () => {
+  const settings = {
+    ...DEFAULT_WORKSPACE_SETTINGS,
+    features: {
+      ...DEFAULT_WORKSPACE_SETTINGS.features,
+      expenses: false,
+      kiosks: false
+    }
+  };
+  const navigation = [
+    { label: "Manage", items: [{ label: "Team" }, { label: "Expenses" }, { label: "Kiosks" }] }
+  ];
+
+  assert.equal(canAccessSection({ accessRole: "Owner" }, "Expenses", settings), false);
+  assert.equal(canAccessSection({ accessRole: "Member" }, "Expenses", settings), false);
+  assert.deepEqual(filterNavigationGroups(navigation, { accessRole: "Owner" }, settings), [
+    { label: "Manage", items: [{ label: "Team" }] }
+  ]);
+  assert.equal(firstAccessibleSection({ accessRole: "Member" }, "Expenses", settings), "Time Tracker");
 });
 
 test("empty workspaces resolve to a setup owner so the team can recover", () => {

@@ -12,7 +12,10 @@ import {
   getLocalDateKey,
   getRollingWeekDays
 } from "../domain/dateUtils.js";
-import { DEFAULT_REPORT_FILTERS } from "../domain/appConfig.js";
+import {
+  DEFAULT_REPORT_FILTERS,
+  normalizeWorkspaceFeatures
+} from "../domain/appConfig.js";
 import { createFreshWorkspace } from "../domain/workspaceSetup.js";
 import { buildPagePropsBySection } from "../pages/pagePropsBySection.js";
 import { trackClientEvent } from "../services/clientLogger.js";
@@ -65,7 +68,8 @@ export function useCreativeOperationsApp() {
     setActiveSection,
     setActiveUtility,
     setStatusMessage,
-    teamMembers
+    teamMembers,
+    workspaceSettings
   });
 
   const activeProjects = useMemo(
@@ -117,13 +121,13 @@ export function useCreativeOperationsApp() {
   });
 
   useEffect(() => {
-    if (!canAccessSection(currentUser, activeSection)) {
-      const nextSection = firstAccessibleSection(currentUser);
+    if (!canAccessSection(currentUser, activeSection, workspaceSettings)) {
+      const nextSection = firstAccessibleSection(currentUser, undefined, workspaceSettings);
       setActiveSection(nextSection);
       setActiveUtility(null);
       setStatusMessage(`${nextSection} opened.`);
     }
-  }, [activeSection, currentUser]);
+  }, [activeSection, currentUser, workspaceSettings]);
 
   useEffect(() => {
     if (activeUtility === "Settings" && !canPerform(currentUser, PERMISSIONS.MANAGE_SETTINGS)) {
@@ -143,7 +147,7 @@ export function useCreativeOperationsApp() {
   });
 
   function handleNavigate(section) {
-    if (!canAccessSection(currentUser, section)) {
+    if (!canAccessSection(currentUser, section, workspaceSettings)) {
       setActiveUtility(null);
       setStatusMessage(`You do not have permission to open ${section}.`);
       trackClientEvent("navigation_blocked", { section });
@@ -172,12 +176,13 @@ export function useCreativeOperationsApp() {
   }
 
   function updateWorkspaceSetting(settingKey, value) {
+    const nextValue = settingKey === "features" ? normalizeWorkspaceFeatures(value) : value;
     setWorkspaceSettings((currentSettings) => ({
       ...currentSettings,
-      [settingKey]: value
+      [settingKey]: nextValue
     }));
     if (settingKey === "defaultBillable" && !timeTracking.isRunning) {
-      timeTracking.setBillable(value);
+      timeTracking.setBillable(nextValue);
     }
     setStatusMessage("Workspace setting updated.");
   }

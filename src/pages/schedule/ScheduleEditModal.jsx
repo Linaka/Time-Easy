@@ -11,7 +11,8 @@ import {
 import {
   DateInput,
   FormField,
-  Select
+  Select,
+  TimeInput
 } from "../../components/ui.jsx";
 import { cx } from "../../components/classNames.js";
 import { formatReadableDate } from "../../domain/dateUtils.js";
@@ -141,20 +142,18 @@ export function ScheduleEditModal({
 
           <div className={styles["schedule-page__modal-grid"]}>
             <FormField label="Start" htmlFor={`${item.id}-schedule-edit-start`}>
-              <input
+              <TimeInput
                 id={`${item.id}-schedule-edit-start`}
-                type="time"
                 value={draft.start}
-                onChange={(event) => setFormValue(setDraft, "start", event.target.value)}
+                onChange={(value) => setFormValue(setDraft, "start", value)}
                 className={styles["schedule-page__modal-input"]}
               />
             </FormField>
             <FormField label="End" htmlFor={`${item.id}-schedule-edit-end`}>
-              <input
+              <TimeInput
                 id={`${item.id}-schedule-edit-end`}
-                type="time"
                 value={draft.end}
-                onChange={(event) => setFormValue(setDraft, "end", event.target.value)}
+                onChange={(value) => setFormValue(setDraft, "end", value)}
                 className={styles["schedule-page__modal-input"]}
               />
             </FormField>

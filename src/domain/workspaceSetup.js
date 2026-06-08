@@ -1,6 +1,8 @@
 import {
   DEFAULT_EMPLOYMENT_GRADES,
-  DEFAULT_WORKSPACE_SETTINGS
+  DEFAULT_TEAM_CAPACITY_HOURS,
+  DEFAULT_WORKSPACE_SETTINGS,
+  normalizeWorkspaceSettings
 } from "./appConfig.js";
 
 function cloneItems(items) {
@@ -44,11 +46,11 @@ export function createFreshWorkspace(timestamp = new Date()) {
         role: "Workspace Owner",
         accessRole: "Owner",
         status: "Active",
-        capacityHours: 40,
+        capacityHours: DEFAULT_TEAM_CAPACITY_HOURS,
         gradeId: "grade-4"
       }
     ],
     timeOffRequests: [],
-    workspaceSettings: { ...DEFAULT_WORKSPACE_SETTINGS }
+    workspaceSettings: normalizeWorkspaceSettings(DEFAULT_WORKSPACE_SETTINGS)
   };
 }

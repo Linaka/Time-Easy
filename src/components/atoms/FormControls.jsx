@@ -1,5 +1,4 @@
 import React, {
-  useCallback,
   useEffect,
   useId,
   useLayoutEffect,
@@ -12,12 +11,15 @@ import {
   CalendarDays,
   ChevronLeft,
   ChevronRight,
+  Clock3,
   Filter
 } from "lucide-react";
 import { cx } from "../classNames.js";
+import { useAnchoredPopover } from "./useAnchoredPopover.js";
 import styles from "./FormControls.module.css";
 
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const TIME_VALUE_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 const WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 function getDateKey(date) {
@@ -74,6 +76,29 @@ function buildCalendarDays(viewDate) {
   });
 }
 
+function buildTimeOptions(stepMinutes) {
+  const safeStepMinutes = Number.isFinite(Number(stepMinutes)) && Number(stepMinutes) > 0
+    ? Number(stepMinutes)
+    : 15;
+  const optionCount = Math.ceil((24 * 60) / safeStepMinutes);
+
+  return Array.from({ length: optionCount }, (_, index) => {
+    const minutesFromMidnight = Math.min(index * safeStepMinutes, (24 * 60) - 1);
+    const hours = Math.floor(minutesFromMidnight / 60);
+    const minutes = minutesFromMidnight % 60;
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  });
+}
+
+function getTimeOptions(value, stepMinutes) {
+  const options = buildTimeOptions(stepMinutes);
+  if (TIME_VALUE_PATTERN.test(String(value || "")) && !options.includes(value)) {
+    return [...options, value].sort();
+  }
+
+  return options;
+}
+
 export function FormField({ label, htmlFor, helper, children }) {
   return (
     <div className={styles["form-field"]}>
@@ -119,7 +144,15 @@ export function DateInput({
   const selectedDate = useMemo(() => parseDateKey(value), [value]);
   const [open, setOpen] = useState(false);
   const [viewDate, setViewDate] = useState(() => getStartOfMonth(selectedDate || new Date()));
-  const [popoverStyle, setPopoverStyle] = useState(null);
+  const { popoverStyle } = useAnchoredPopover({
+    controlRef,
+    fallbackHeight: 360,
+    minAvailableHeight: 236,
+    minWidth: 292,
+    open,
+    popoverRef,
+    positionKey: viewDate
+  });
   const todayKey = getDateKey(new Date());
   const days = useMemo(() => buildCalendarDays(viewDate), [viewDate]);
   const monthLabel = useMemo(
@@ -132,63 +165,6 @@ export function DateInput({
       setViewDate(getStartOfMonth(selectedDate));
     }
   }, [open, selectedDate]);
-
-  const updatePopoverPosition = useCallback(() => {
-    const control = controlRef.current;
-    if (!control || typeof window === "undefined") {
-      return;
-    }
-
-    const rect = control.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const margin = 8;
-    const gap = 8;
-    const width = Math.min(Math.max(rect.width, 292), viewportWidth - margin * 2);
-    const measuredHeight = Math.max(popoverRef.current?.getBoundingClientRect().height || 0, 360);
-    const availableBelow = viewportHeight - rect.bottom - gap - margin;
-    const availableAbove = rect.top - gap - margin;
-    const placeAbove = availableBelow < measuredHeight && availableAbove > availableBelow;
-    const availableHeight = Math.max(236, placeAbove ? availableAbove : availableBelow);
-    const left = Math.min(
-      Math.max(margin, rect.left),
-      Math.max(margin, viewportWidth - width - margin)
-    );
-    const preferredTop = placeAbove
-      ? rect.top - gap - Math.min(measuredHeight, availableHeight)
-      : rect.bottom + gap;
-    const top = Math.min(
-      Math.max(margin, preferredTop),
-      Math.max(margin, viewportHeight - Math.min(measuredHeight, availableHeight) - margin)
-    );
-
-    setPopoverStyle({
-      left: `${left}px`,
-      top: `${top}px`,
-      width: `${width}px`,
-      maxHeight: `${Math.min(availableHeight, viewportHeight - margin * 2)}px`
-    });
-  }, []);
-
-  useLayoutEffect(() => {
-    if (!open) {
-      return undefined;
-    }
-
-    function handleViewportChange() {
-      updatePopoverPosition();
-      window.requestAnimationFrame(updatePopoverPosition);
-    }
-
-    handleViewportChange();
-    window.addEventListener("resize", handleViewportChange);
-    window.addEventListener("scroll", handleViewportChange, true);
-
-    return () => {
-      window.removeEventListener("resize", handleViewportChange);
-      window.removeEventListener("scroll", handleViewportChange, true);
-    };
-  }, [open, updatePopoverPosition, viewDate]);
 
   useEffect(() => {
     if (!open) {
@@ -345,6 +321,183 @@ export function DateInput({
         <CalendarDays className={styles["date-input__icon"]} aria-hidden="true" />
       </button>
       {calendar}
+    </div>
+  );
+}
+
+export function TimeInput({
+  id,
+  value,
+  onChange,
+  className,
+  disabled,
+  stepMinutes = 15,
+  onClick,
+  onFocus,
+  onKeyDown,
+  ...inputProps
+}) {
+  const generatedId = useId();
+  const controlId = id || `time-input-${generatedId}`;
+  const pickerId = `${controlId}-picker`;
+  const controlRef = useRef(null);
+  const inputRef = useRef(null);
+  const popoverRef = useRef(null);
+  const selectedOptionRef = useRef(null);
+  const [open, setOpen] = useState(false);
+  const { popoverStyle } = useAnchoredPopover({
+    controlRef,
+    fallbackHeight: 260,
+    minAvailableHeight: 180,
+    minWidth: 220,
+    open,
+    popoverRef
+  });
+  const options = useMemo(() => getTimeOptions(value, stepMinutes), [stepMinutes, value]);
+
+  useLayoutEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      selectedOptionRef.current?.scrollIntoView({ block: "nearest" });
+    });
+  }, [open, value]);
+
+  useEffect(() => {
+    if (!open) {
+      return undefined;
+    }
+
+    function handlePointerDown(event) {
+      const target = event.target;
+      if (
+        controlRef.current?.contains(target) ||
+        popoverRef.current?.contains(target)
+      ) {
+        return;
+      }
+
+      setOpen(false);
+    }
+
+    function handleDocumentKeyDown(event) {
+      if (event.key === "Escape") {
+        setOpen(false);
+        inputRef.current?.focus();
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleDocumentKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleDocumentKeyDown);
+    };
+  }, [open]);
+
+  function openPicker() {
+    if (!disabled) {
+      setOpen(true);
+    }
+  }
+
+  function handleSelectTime(nextValue) {
+    onChange(nextValue);
+    setOpen(false);
+    inputRef.current?.focus();
+  }
+
+  function handleInputKeyDown(event) {
+    onKeyDown?.(event);
+
+    if (event.defaultPrevented) {
+      return;
+    }
+
+    if (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openPicker();
+    }
+  }
+
+  const picker = open && typeof document !== "undefined"
+    ? createPortal(
+        <div
+          ref={popoverRef}
+          id={pickerId}
+          role="dialog"
+          aria-label="Choose time"
+          className={styles["time-picker"]}
+          style={popoverStyle || undefined}
+        >
+          <div role="listbox" aria-label="Time options" className={styles["time-picker__list"]}>
+            {options.map((option) => {
+              const selected = option === value;
+              return (
+                <button
+                  key={option}
+                  ref={selected ? selectedOptionRef : null}
+                  type="button"
+                  role="option"
+                  aria-selected={selected}
+                  onClick={() => handleSelectTime(option)}
+                  className={cx(
+                    styles["time-picker__option"],
+                    selected ? styles["time-picker__option--selected"] : null
+                  )}
+                >
+                  {option}
+                </button>
+              );
+            })}
+          </div>
+        </div>,
+        document.body
+      )
+    : null;
+
+  return (
+    <div ref={controlRef} className={styles["time-input"]}>
+      <input
+        {...inputProps}
+        ref={inputRef}
+        id={controlId}
+        type="time"
+        value={value || ""}
+        disabled={disabled}
+        onChange={(event) => onChange(event.target.value)}
+        onFocus={(event) => {
+          onFocus?.(event);
+          openPicker();
+        }}
+        onClick={(event) => {
+          onClick?.(event);
+          openPicker();
+        }}
+        onKeyDown={handleInputKeyDown}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-controls={open ? pickerId : undefined}
+        className={cx(styles["time-input__control"], className)}
+      />
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => {
+          openPicker();
+          window.requestAnimationFrame(() => inputRef.current?.focus());
+        }}
+        className={styles["time-input__button"]}
+        aria-label="Choose time"
+        aria-expanded={open}
+        aria-controls={open ? pickerId : undefined}
+      >
+        <Clock3 className={styles["time-input__icon"]} aria-hidden="true" />
+      </button>
+      {picker}
     </div>
   );
 }

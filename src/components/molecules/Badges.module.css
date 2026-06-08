@@ -53,7 +53,9 @@
 }
 
 .badge {
-  @apply inline-flex min-h-8 items-center rounded-full border px-2.5 text-xs font-semibold;
+  @apply inline-flex min-h-8 shrink-0 items-center whitespace-nowrap rounded-full border px-2.5 text-xs font-semibold;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .badge--with-icon {
@@ -124,5 +126,5 @@
 }
 
 .badge__icon {
-  @apply h-3.5 w-3.5;
+  @apply h-3.5 w-3.5 shrink-0;
 }

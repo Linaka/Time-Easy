@@ -1,8 +1,10 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import {
+  DEFAULT_WORKSPACE_FEATURES,
   DEFAULT_EMPLOYMENT_GRADES,
   DEFAULT_WORKSPACE_SETTINGS,
-  STORAGE_PREFIX
+  STORAGE_PREFIX,
+  normalizeWorkspaceSettings
 } from "../domain/appConfig.js";
 import {
   createInitialActivity,
@@ -17,6 +19,7 @@ import {
 } from "../domain/seedData.js";
 import { ensureWorkspaceOwner } from "../domain/auth.js";
 import { usePersistentState } from "./usePersistentState.js";
+import { useSharedWorkspacePersistence } from "./useSharedWorkspacePersistence.js";
 
 export function useWorkspaceState(todayKey) {
   const [projects, setProjects] = usePersistentState(
@@ -59,15 +62,10 @@ export function useWorkspaceState(todayKey) {
   );
   const [storedWorkspaceSettings, setWorkspaceSettings] = usePersistentState(
     `${STORAGE_PREFIX}.settings`,
-    () => DEFAULT_WORKSPACE_SETTINGS
+    () => normalizeWorkspaceSettings(DEFAULT_WORKSPACE_SETTINGS)
   );
   const workspaceSettings = useMemo(
-    () => ({
-      ...DEFAULT_WORKSPACE_SETTINGS,
-      ...(storedWorkspaceSettings && typeof storedWorkspaceSettings === "object"
-        ? storedWorkspaceSettings
-        : {})
-    }),
+    () => normalizeWorkspaceSettings(storedWorkspaceSettings),
     [storedWorkspaceSettings]
   );
 
@@ -75,15 +73,15 @@ export function useWorkspaceState(todayKey) {
     const missingDefaultSetting = Object.keys(DEFAULT_WORKSPACE_SETTINGS).some(
       (settingKey) => storedWorkspaceSettings?.[settingKey] === undefined
     );
+    const missingFeatureSetting = Object.keys(DEFAULT_WORKSPACE_FEATURES).some(
+      (featureKey) => storedWorkspaceSettings?.features?.[featureKey] === undefined
+    );
 
-    if (!missingDefaultSetting) {
+    if (!missingDefaultSetting && !missingFeatureSetting) {
       return;
     }
 
-    setWorkspaceSettings((currentSettings) => ({
-      ...DEFAULT_WORKSPACE_SETTINGS,
-      ...(currentSettings && typeof currentSettings === "object" ? currentSettings : {})
-    }));
+    setWorkspaceSettings((currentSettings) => normalizeWorkspaceSettings(currentSettings));
   }, [setWorkspaceSettings, storedWorkspaceSettings]);
 
   useEffect(() => {
@@ -92,6 +90,68 @@ export function useWorkspaceState(todayKey) {
       setTeamMembers(nextTeamMembers);
     }
   }, [setTeamMembers, teamMembers]);
+
+  const workspaceSnapshot = useMemo(
+    () => ({
+      activityItems,
+      employmentGrades,
+      entries,
+      expenses,
+      kioskSessions,
+      projectDependencies,
+      projects,
+      scheduleItems,
+      teamMembers,
+      timeOffRequests,
+      workspaceSettings
+    }),
+    [
+      activityItems,
+      employmentGrades,
+      entries,
+      expenses,
+      kioskSessions,
+      projectDependencies,
+      projects,
+      scheduleItems,
+      teamMembers,
+      timeOffRequests,
+      workspaceSettings
+    ]
+  );
+  const applyWorkspaceSnapshot = useCallback(
+    (nextWorkspace) => {
+      setActivityItems(nextWorkspace.activityItems);
+      setEmploymentGrades(nextWorkspace.employmentGrades);
+      setEntries(nextWorkspace.entries);
+      setExpenses(nextWorkspace.expenses);
+      setKioskSessions(nextWorkspace.kioskSessions);
+      setProjectDependencies(nextWorkspace.projectDependencies);
+      setProjects(nextWorkspace.projects);
+      setScheduleItems(nextWorkspace.scheduleItems);
+      setTeamMembers(nextWorkspace.teamMembers);
+      setTimeOffRequests(nextWorkspace.timeOffRequests);
+      setWorkspaceSettings(nextWorkspace.workspaceSettings);
+    },
+    [
+      setActivityItems,
+      setEmploymentGrades,
+      setEntries,
+      setExpenses,
+      setKioskSessions,
+      setProjectDependencies,
+      setProjects,
+      setScheduleItems,
+      setTeamMembers,
+      setTimeOffRequests,
+      setWorkspaceSettings
+    ]
+  );
+
+  useSharedWorkspacePersistence({
+    onWorkspaceChange: applyWorkspaceSnapshot,
+    workspace: workspaceSnapshot
+  });
 
   return {
     activityItems,

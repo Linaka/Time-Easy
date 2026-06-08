@@ -1,5 +1,5 @@
 .utility-panel {
-  @apply absolute right-4 top-[4.5rem] w-[min(92vw,360px)] rounded-2xl border border-brand-200 bg-white shadow-soft;
+  @apply absolute right-4 top-[4.5rem] max-h-[calc(100vh-5.5rem)] w-[min(92vw,360px)] overflow-y-auto rounded-2xl border border-brand-200 bg-white shadow-soft;
   background: var(--theme-surface, #ffffff);
   border-color: var(--theme-border, #e2e2e2);
   box-shadow: var(--theme-shadow, 0 4px 16px rgb(0 0 0 / 0.12));
@@ -219,6 +219,20 @@
 
 .theme-chooser__swatch--kawaii-pop-three {
   background: #fff1b8;
+}
+
+.feature-toggles {
+  @apply grid gap-3 rounded-2xl border border-brand-200 p-3;
+  border-color: var(--theme-border, #e2e2e2);
+}
+
+.feature-toggles__legend {
+  @apply px-1 text-sm font-bold text-black;
+  color: var(--theme-strong, #000000);
+}
+
+.feature-toggles__options {
+  @apply grid gap-2;
 }
 
 .switch-row {
