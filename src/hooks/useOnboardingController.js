@@ -20,8 +20,8 @@ export function useOnboardingController({
 }) {
   const [guidanceStepIndex, setGuidanceStepIndex] = useState(null);
   const availableGuidanceSteps = useMemo(
-    () => GUIDANCE_STEPS.filter((step) => canAccessSection(currentUser, step.section)),
-    [currentUser]
+    () => GUIDANCE_STEPS.filter((step) => canAccessSection(currentUser, step.section, workspaceSettings)),
+    [currentUser, workspaceSettings]
   );
   const guidanceStep = guidanceStepIndex === null ? null : availableGuidanceSteps[guidanceStepIndex] || null;
   const onboardingStatus = workspaceSettings.onboardingStatus || ONBOARDING_STATUS.PENDING;
@@ -54,7 +54,7 @@ export function useOnboardingController({
       return;
     }
 
-    if (!canAccessSection(currentUser, guidanceStep.section)) {
+    if (!canAccessSection(currentUser, guidanceStep.section, workspaceSettings)) {
       setGuidanceStepIndex(null);
       updateOnboardingStatus(ONBOARDING_STATUS.COMPLETED);
       return;
@@ -67,7 +67,8 @@ export function useOnboardingController({
     guidanceStep,
     setActiveSection,
     setActiveUtility,
-    setWorkspaceSettings
+    setWorkspaceSettings,
+    workspaceSettings
   ]);
 
   function updateOnboardingStatus(status) {
@@ -78,7 +79,7 @@ export function useOnboardingController({
   }
 
   function openOverviewSection() {
-    const nextSection = firstAccessibleSection(currentUser, OVERVIEW_SECTION);
+    const nextSection = firstAccessibleSection(currentUser, OVERVIEW_SECTION, workspaceSettings);
     setActiveSection(nextSection);
     setActiveUtility(null);
     return nextSection;

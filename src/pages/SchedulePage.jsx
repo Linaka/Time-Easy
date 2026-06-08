@@ -18,7 +18,8 @@ import {
   ProjectBadge,
   RowActions,
   Select,
-  StatusBadge
+  StatusBadge,
+  TimeInput
 } from "../components/ui.jsx";
 import { cx } from "../components/classNames.js";
 import { formatReadableDate } from "../domain/dateUtils.js";
@@ -154,8 +155,8 @@ export function SchedulePage({
           <FormField label="Person" htmlFor="schedule-person"><Select id="schedule-person" value={form.memberId} onChange={(value) => setFormValue(setForm, "memberId", value)}>{teamMembers.map((member) => <option key={member.id} value={member.id}>{member.name}</option>)}</Select></FormField>
           <FormField label="Project" htmlFor="schedule-project"><Select id="schedule-project" value={form.projectId} onChange={(value) => setFormValue(setForm, "projectId", value)}>{projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</Select></FormField>
           <FormField label="Date" htmlFor="schedule-date"><DateInput id="schedule-date" value={form.dateKey} onChange={(value) => setFormValue(setForm, "dateKey", value)} className={styles["schedule-page__style-003"]} /></FormField>
-          <FormField label="Start" htmlFor="schedule-start"><input id="schedule-start" type="time" value={form.start} onChange={(event) => setFormValue(setForm, "start", event.target.value)} className={styles["schedule-page__style-004"]} /></FormField>
-          <FormField label="End" htmlFor="schedule-end"><input id="schedule-end" type="time" value={form.end} onChange={(event) => setFormValue(setForm, "end", event.target.value)} className={styles["schedule-page__style-005"]} /></FormField>
+          <FormField label="Start" htmlFor="schedule-start"><TimeInput id="schedule-start" value={form.start} onChange={(value) => setFormValue(setForm, "start", value)} className={styles["schedule-page__style-004"]} /></FormField>
+          <FormField label="End" htmlFor="schedule-end"><TimeInput id="schedule-end" value={form.end} onChange={(value) => setFormValue(setForm, "end", value)} className={styles["schedule-page__style-005"]} /></FormField>
           <FormField label="Location" htmlFor="schedule-location"><input id="schedule-location" value={form.location} onChange={(event) => setFormValue(setForm, "location", event.target.value)} className={styles["schedule-page__style-006"]} /></FormField>
           <div className={styles["schedule-page__style-007"]}><PrimaryButton type="submit" icon={Plus}>Add shift</PrimaryButton></div>
         </form>

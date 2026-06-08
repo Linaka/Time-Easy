@@ -38,7 +38,7 @@
 }
 
 .data-table__table {
-  @apply w-full min-w-full table-fixed;
+  @apply w-full min-w-[44rem] table-fixed;
 }
 
 .data-table__heading-row {

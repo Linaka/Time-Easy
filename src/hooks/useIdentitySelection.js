@@ -13,7 +13,8 @@ export function useIdentitySelection({
   setActiveSection,
   setActiveUtility,
   setStatusMessage,
-  teamMembers
+  teamMembers,
+  workspaceSettings
 }) {
   const [selectedUserId, setSelectedUserId] = usePersistentState(`${STORAGE_PREFIX}.currentUserId`, "");
   const selectedUser = useMemo(
@@ -47,7 +48,7 @@ export function useIdentitySelection({
     setStatusMessage(`${nextUser.name} selected.`);
     trackClientEvent("identity_select", { accessRole: getAccessRole(nextUser) });
 
-    const nextSection = firstAccessibleSection(nextUser, activeSection);
+    const nextSection = firstAccessibleSection(nextUser, activeSection, workspaceSettings);
     if (nextSection !== activeSection) {
       setActiveSection(nextSection);
     }

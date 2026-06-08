@@ -39,7 +39,7 @@
 }
 
 .reports-page__style-011 {
-  @apply grid gap-5 xl:grid-cols-[360px_minmax(0,1fr)];
+  @apply grid gap-5 2xl:grid-cols-[360px_minmax(44rem,1fr)];
 }
 
 .reports-page__style-012 {

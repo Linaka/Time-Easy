@@ -23,7 +23,8 @@
 }
 
 .calendar-page__style-007 {
-  @apply grid gap-4 p-4 sm:grid-cols-2 sm:p-5 xl:grid-cols-7;
+  @apply grid gap-4 p-4 sm:grid-cols-2 sm:p-5 xl:grid-cols-[repeat(auto-fit,minmax(10rem,1fr))];
+  align-items: end;
 }
 
 .calendar-page__style-008 {
@@ -44,6 +45,46 @@
 
 .calendar-page__style-012 {
   @apply flex items-end;
+}
+
+.calendar-page__add-block-action {
+  @apply relative inline-flex;
+}
+
+.calendar-page__add-block-button {
+  composes: focus-ring from global;
+  @apply inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black text-white hover:bg-brand-800;
+  background: var(--theme-accent, #000000);
+  color: var(--theme-on-accent, #ffffff);
+}
+
+.calendar-page__add-block-button:hover {
+  background: var(--theme-accent-hover, #282828);
+}
+
+.calendar-page__add-block-icon {
+  @apply h-4 w-4;
+}
+
+.calendar-page__add-block-tooltip {
+  @apply pointer-events-none invisible absolute right-0 top-[calc(100%+0.5rem)] z-50 grid w-64 gap-1 rounded-md bg-slate-950 px-3 py-2 text-left text-xs leading-5 text-white opacity-0 shadow-soft transition;
+  background: var(--theme-tooltip, #0f172a);
+  box-shadow: var(--theme-shadow, 0 4px 16px rgb(0 0 0 / 0.12));
+  color: var(--theme-tooltip-text, #ffffff);
+}
+
+.calendar-page__add-block-button:hover + .calendar-page__add-block-tooltip,
+.calendar-page__add-block-button:focus + .calendar-page__add-block-tooltip,
+.calendar-page__add-block-button:focus-visible + .calendar-page__add-block-tooltip {
+  @apply visible opacity-100;
+}
+
+.calendar-page__add-block-tooltip-title {
+  @apply font-bold;
+}
+
+.calendar-page__add-block-tooltip-description {
+  @apply font-medium;
 }
 
 .calendar-page__style-013 {

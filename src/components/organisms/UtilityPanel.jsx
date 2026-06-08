@@ -13,8 +13,10 @@ import {
   X
 } from "lucide-react";
 import {
+  WORKSPACE_FEATURE_FLAGS,
   WORKSPACE_THEME_IDS,
-  WORKSPACE_THEMES
+  WORKSPACE_THEMES,
+  normalizeWorkspaceFeatures
 } from "../../domain/appConfig.js";
 import { currency } from "../../domain/formatters.js";
 import { utilitySubtitle } from "../../domain/navigation.js";
@@ -89,6 +91,15 @@ export function UtilityPanel({
             description="Saved preference for denser operational views."
             checked={workspaceSettings.compactTables}
             onChange={(checked) => onSettingChange("compactTables", checked)}
+          />
+          <FeatureToggleGroup
+            features={workspaceSettings.features}
+            onChange={(featureId, checked) =>
+              onSettingChange("features", {
+                ...normalizeWorkspaceFeatures(workspaceSettings.features),
+                [featureId]: checked
+              })
+            }
           />
           <GhostButton onClick={() => handleNavigate("Projects")} icon={BriefcaseBusiness}>
             Manage projects
@@ -170,6 +181,27 @@ export function UtilityPanel({
         </div>
       ) : null}
     </section>
+  );
+}
+
+function FeatureToggleGroup({ features, onChange }) {
+  const normalizedFeatures = normalizeWorkspaceFeatures(features);
+
+  return (
+    <fieldset className={styles["feature-toggles"]}>
+      <legend className={styles["feature-toggles__legend"]}>Team modules</legend>
+      <div className={styles["feature-toggles__options"]}>
+        {WORKSPACE_FEATURE_FLAGS.map((feature) => (
+          <SwitchRow
+            key={feature.id}
+            label={feature.label}
+            description={feature.description}
+            checked={normalizedFeatures[feature.id]}
+            onChange={(checked) => onChange(feature.id, checked)}
+          />
+        ))}
+      </div>
+    </fieldset>
   );
 }
 

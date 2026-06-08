@@ -1,9 +1,16 @@
-import { ACCESS_ROLES, getAccessRole } from "../../domain/auth.js";
+import { getAccessRole } from "../../domain/auth.js";
 import { slugify, validatePlainFields } from "../../domain/formUtils.js";
 import {
   getEmploymentGrade,
   memberName
 } from "../../domain/projectUtils.js";
+import {
+  getTeamMemberDeleteAvailability,
+  isDemotingLastWorkspaceOwner,
+  normalizeTeamAccessRole,
+  normalizeTeamStatus,
+  parseTeamCapacityHours
+} from "../../domain/teamMember.js";
 
 export function createTeamCommands({
   addActivity,
@@ -21,19 +28,68 @@ export function createTeamCommands({
     }
 
     const isFirstMember = teamMembers.length === 0;
-    const requestedAccessRole = ACCESS_ROLES.includes(memberDraft.accessRole)
-      ? memberDraft.accessRole
-      : "Member";
+    const requestedAccessRole = normalizeTeamAccessRole(memberDraft.accessRole);
     const nextMember = {
       id: `${slugify(memberDraft.name)}-${Date.now()}`,
-      status: "Active",
       ...memberDraft,
       accessRole: isFirstMember ? "Owner" : requestedAccessRole,
-      capacityHours: Number(memberDraft.capacityHours) || 40
+      capacityHours: parseTeamCapacityHours(memberDraft.capacityHours),
+      status: normalizeTeamStatus(memberDraft.status)
     };
     setTeamMembers((currentMembers) => [nextMember, ...currentMembers]);
     addActivity("Team", `Added ${nextMember.name} to the workspace`);
     setStatusMessage(`${nextMember.name} added to the team.`);
+    return true;
+  }
+
+  function addTeamMembers(memberDrafts) {
+    if (!memberDrafts.length) {
+      setStatusMessage("There are no valid team members to import.");
+      return false;
+    }
+
+    const existingEmails = new Set(teamMembers.map((member) => String(member.email || "").toLowerCase()));
+    const incomingEmails = new Set();
+    const validationError = memberDrafts
+      .map((memberDraft) => {
+        const plainFieldError = validatePlainFields([memberDraft.name, memberDraft.email, memberDraft.role]);
+        const normalizedEmail = String(memberDraft.email || "").toLowerCase();
+        if (plainFieldError) {
+          return plainFieldError;
+        }
+        if (!String(memberDraft.name || "").trim() || !normalizedEmail || !String(memberDraft.role || "").trim()) {
+          return "Imported team members need a name, email, and role.";
+        }
+        if (existingEmails.has(normalizedEmail) || incomingEmails.has(normalizedEmail)) {
+          return `${memberDraft.email} already exists.`;
+        }
+        incomingEmails.add(normalizedEmail);
+        return "";
+      })
+      .find(Boolean);
+
+    if (validationError) {
+      setStatusMessage(validationError);
+      return false;
+    }
+
+    const importedAt = Date.now();
+    const nextMembers = memberDrafts.map((memberDraft, index) => {
+      const requestedAccessRole = normalizeTeamAccessRole(memberDraft.accessRole);
+      const isFirstMember = teamMembers.length === 0 && index === 0;
+
+      return {
+        id: `${slugify(memberDraft.name)}-${importedAt}-${index}`,
+        ...memberDraft,
+        accessRole: isFirstMember ? "Owner" : requestedAccessRole,
+        capacityHours: parseTeamCapacityHours(memberDraft.capacityHours),
+        status: normalizeTeamStatus(memberDraft.status)
+      };
+    });
+
+    setTeamMembers((currentMembers) => [...nextMembers, ...currentMembers]);
+    addActivity("Team", `Imported ${nextMembers.length} team members`);
+    setStatusMessage(`${nextMembers.length} team members imported.`);
     return true;
   }
 
@@ -47,6 +103,43 @@ export function createTeamCommands({
     setStatusMessage(`Team member marked ${nextStatus}.`);
   }
 
+  function updateTeamMember(memberId, memberPatch) {
+    const member = teamMembers.find((currentMember) => currentMember.id === memberId);
+    if (!member) {
+      setStatusMessage("Team member was not found.");
+      return false;
+    }
+
+    const validationError = validatePlainFields([memberPatch.name, memberPatch.email, memberPatch.role]);
+    if (validationError) {
+      setStatusMessage(validationError);
+      return false;
+    }
+
+    const nextAccessRole = normalizeTeamAccessRole(memberPatch.accessRole, getAccessRole(member));
+
+    if (isDemotingLastWorkspaceOwner(teamMembers, member, nextAccessRole)) {
+      setStatusMessage("Add another owner before changing the last workspace owner.");
+      return false;
+    }
+
+    const nextMember = {
+      ...member,
+      ...memberPatch,
+      accessRole: nextAccessRole,
+      capacityHours: parseTeamCapacityHours(memberPatch.capacityHours)
+    };
+
+    setTeamMembers((currentMembers) =>
+      currentMembers.map((currentMember) =>
+        currentMember.id === memberId ? nextMember : currentMember
+      )
+    );
+    addActivity("Team", `Updated ${nextMember.name}`);
+    setStatusMessage(`${nextMember.name} updated.`);
+    return true;
+  }
+
   function deleteTeamMember(memberId) {
     const member = teamMembers.find((currentMember) => currentMember.id === memberId);
     if (!member) {
@@ -54,17 +147,10 @@ export function createTeamCommands({
       return false;
     }
 
-    const isLastMember = teamMembers.length <= 1;
-    const ownerCount = teamMembers.filter((currentMember) => getAccessRole(currentMember) === "Owner").length;
-    const isDeletingLastOwner = getAccessRole(member) === "Owner" && ownerCount <= 1;
+    const deleteAvailability = getTeamMemberDeleteAvailability(teamMembers, member);
 
-    if (isLastMember) {
-      setStatusMessage("Add another owner before deleting the last workspace member.");
-      return false;
-    }
-
-    if (isDeletingLastOwner) {
-      setStatusMessage("Add another owner before deleting the last workspace owner.");
+    if (!deleteAvailability.canDelete) {
+      setStatusMessage(deleteAvailability.message);
       return false;
     }
 
@@ -107,9 +193,11 @@ export function createTeamCommands({
   }
 
   return {
+    addTeamMembers,
     addTeamMember,
     deleteTeamMember,
     updateEmploymentGrade,
+    updateTeamMember,
     updateMemberStatus
   };
 }

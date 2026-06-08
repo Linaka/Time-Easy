@@ -1,0 +1,53 @@
+.icon-tooltip-button {
+  @apply relative inline-flex;
+}
+
+.icon-tooltip-button__button {
+  composes: focus-ring from global;
+  @apply inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-transparent transition;
+}
+
+.icon-tooltip-button__button--ghost {
+  @apply bg-brand-100 text-black hover:bg-brand-200;
+  background: var(--theme-surface-muted, #efefef);
+  color: var(--theme-text, #000000);
+}
+
+.icon-tooltip-button__button--ghost:hover {
+  background: var(--theme-border-soft, #e2e2e2);
+}
+
+.icon-tooltip-button__button--primary {
+  @apply bg-black text-white hover:bg-brand-800;
+  background: var(--theme-accent, #000000);
+  color: var(--theme-on-accent, #ffffff);
+}
+
+.icon-tooltip-button__button--primary:hover {
+  background: var(--theme-accent-hover, #282828);
+}
+
+.icon-tooltip-button__icon {
+  @apply h-4 w-4;
+}
+
+.icon-tooltip-button__tooltip {
+  @apply pointer-events-none invisible absolute right-0 top-[calc(100%+0.5rem)] z-50 grid w-64 gap-1 rounded-md bg-slate-950 px-3 py-2 text-left text-xs leading-5 text-white opacity-0 shadow-soft transition;
+  background: var(--theme-tooltip, #0f172a);
+  box-shadow: var(--theme-shadow, 0 4px 16px rgb(0 0 0 / 0.12));
+  color: var(--theme-tooltip-text, #ffffff);
+}
+
+.icon-tooltip-button__button:hover + .icon-tooltip-button__tooltip,
+.icon-tooltip-button__button:focus + .icon-tooltip-button__tooltip,
+.icon-tooltip-button__button:focus-visible + .icon-tooltip-button__tooltip {
+  @apply visible opacity-100;
+}
+
+.icon-tooltip-button__tooltip-title {
+  @apply font-bold;
+}
+
+.icon-tooltip-button__tooltip-description {
+  @apply font-medium;
+}

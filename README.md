@@ -1,6 +1,6 @@
 # Creative Operations
 
-Creative Operations is a browser-based time tracking dashboard prototype with a clean SaaS interface, working timer, sample weekly entries, keyboard-accessible controls, automatic totals, local persistence, and functional workspace modules.
+Creative Operations is a browser-based time tracking dashboard prototype with a clean SaaS interface, working timer, sample weekly entries, keyboard-accessible controls, automatic totals, shared server persistence when hosted, local fallback persistence, and functional workspace modules.
 
 ## Modules
 
@@ -24,6 +24,8 @@ Creative Operations is a browser-based time tracking dashboard prototype with a 
 npm install
 npm run dev
 ```
+
+When the app is served by the Vite dev or preview server, browsers on that same server share workspace changes through `/api/workspace`. The shared server copy is stored in `.workspace-data/workspace.json` on the machine running the server. For LAN testing, run `npm run dev -- --host 0.0.0.0` and have everyone use that same server URL. If the endpoint is unavailable, the app falls back to browser localStorage.
 
 ## Desktop App
 
@@ -98,7 +100,7 @@ Core boundaries:
 - Client error logs redact sensitive context fields before writing diagnostics or optional same-origin telemetry.
 - Static security headers define CSP, frame blocking, content sniffing protection, referrer policy, and browser permissions policy.
 - Role-based access rules gate navigation and utility settings in the browser; server-side enforcement remains a backend requirement.
-- App state is stored in localStorage only; no secrets, tokens, analytics scripts, or external API calls are used by default.
+- App state uses same-origin shared workspace storage when served by the Vite server, with browser localStorage as the static/desktop fallback. No secrets, tokens, analytics scripts, or external API calls are used by default.
 - Set `VITE_TELEMETRY_ENDPOINT` to a same-origin endpoint such as `/telemetry` to receive redacted client diagnostics in production.
 - No third-party assets or proprietary branding are embedded.
 
