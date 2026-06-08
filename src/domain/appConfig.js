@@ -1,4 +1,30 @@
 export const STORAGE_PREFIX = "timetrackr.v12";
+export const ACTIVITY_LIMIT = 80;
+export const DEFAULT_CURRENCY = "GBP";
+export const OVERVIEW_SECTION = "Overview";
+export const WORKSPACE_THEME_IDS = {
+  STUDIO: "studio",
+  SOFT_STUDIO: "soft-studio",
+  KAWAII_POP: "kawaii-pop"
+};
+
+export const WORKSPACE_THEMES = [
+  {
+    id: WORKSPACE_THEME_IDS.STUDIO,
+    label: "Studio",
+    description: "Crisp monochrome, high contrast."
+  },
+  {
+    id: WORKSPACE_THEME_IDS.SOFT_STUDIO,
+    label: "Soft Studio",
+    description: "Warm neutrals with teal and sage accents."
+  },
+  {
+    id: WORKSPACE_THEME_IDS.KAWAII_POP,
+    label: "Kawaii Pop",
+    description: "Bright candy energy with clear status colours."
+  }
+];
 
 export const DEFAULT_REPORT_FILTERS = {
   projectId: "All",
@@ -9,6 +35,15 @@ export const DEFAULT_REPORT_FILTERS = {
   billable: "All",
   dateFrom: "",
   dateTo: ""
+};
+
+export const DEFAULT_WORKSPACE_SETTINGS = {
+  requireApprovals: true,
+  defaultBillable: false,
+  compactTables: false,
+  defaultCurrency: DEFAULT_CURRENCY,
+  themeId: WORKSPACE_THEME_IDS.STUDIO,
+  onboardingStatus: "pending"
 };
 
 export const DEFAULT_EMPLOYMENT_GRADES = [
@@ -45,10 +80,10 @@ export const DEFAULT_EMPLOYMENT_GRADES = [
 export const PROJECT_COLORS = {
   blue: {
     label: "Blue",
-    dot: "bg-brand-600",
-    text: "text-brand-700",
-    soft: "bg-brand-50",
-    border: "border-brand-200"
+    dot: "bg-sky-500",
+    text: "text-sky-700",
+    soft: "bg-sky-50",
+    border: "border-sky-200"
   },
   purple: {
     label: "Purple",

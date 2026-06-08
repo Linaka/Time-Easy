@@ -1,0 +1,72 @@
+.row-actions {
+  @apply flex flex-wrap gap-2;
+}
+
+.row-actions__button {
+  @apply inline-flex min-h-11 items-center gap-1.5 rounded-full border border-transparent px-4 text-xs font-medium;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black;
+  outline-color: var(--theme-focus, #000000);
+}
+
+.row-actions__button--primary {
+  @apply bg-black text-white hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-50;
+  background: var(--theme-accent, #000000);
+  color: var(--theme-on-accent, #ffffff);
+}
+
+.row-actions__button--primary:hover {
+  background: var(--theme-accent-hover, #282828);
+}
+
+.row-actions__button--secondary {
+  @apply bg-brand-100 text-black hover:bg-brand-200;
+  background: var(--theme-surface-muted, #efefef);
+  color: var(--theme-text, #000000);
+}
+
+.row-actions__button--secondary:hover {
+  background: var(--theme-border-soft, #e2e2e2);
+}
+
+.row-actions__button--success {
+  background: var(--semantic-success-strong, #047857);
+  color: var(--semantic-success-on, #ffffff);
+}
+
+.row-actions__button--success:hover {
+  background: color-mix(in srgb, var(--semantic-success-strong, #047857) 86%, #000000);
+}
+
+.row-actions__button--warning {
+  background: var(--semantic-warning-bg, #fffbeb);
+  border-color: var(--semantic-warning-border, #fde68a);
+  color: var(--semantic-warning-text, #92400e);
+}
+
+.row-actions__button--warning:hover {
+  background: color-mix(in srgb, var(--semantic-warning-bg, #fffbeb) 88%, var(--semantic-warning-border, #fde68a));
+}
+
+.row-actions__button--danger {
+  background: var(--semantic-danger-bg, #fef2f2);
+  border-color: var(--semantic-danger-border, #fecaca);
+  color: var(--semantic-danger-text, #b91c1c);
+}
+
+.row-actions__button--danger:hover {
+  background: color-mix(in srgb, var(--semantic-danger-bg, #fef2f2) 86%, var(--semantic-danger-border, #fecaca));
+}
+
+.row-actions__button--info {
+  background: var(--semantic-info-bg, #f0f9ff);
+  border-color: var(--semantic-info-border, #bae6fd);
+  color: var(--semantic-info-text, #0369a1);
+}
+
+.row-actions__button--info:hover {
+  background: color-mix(in srgb, var(--semantic-info-bg, #f0f9ff) 86%, var(--semantic-info-border, #bae6fd));
+}
+
+.row-actions__icon {
+  @apply h-3.5 w-3.5;
+}

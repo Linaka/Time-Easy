@@ -1,0 +1,380 @@
+.schedule-page__style-001 {
+  @apply grid gap-5;
+}
+
+.schedule-page__style-002 {
+  @apply grid gap-4 border-b border-slate-200 p-4 sm:grid-cols-2 sm:p-5 xl:grid-cols-7;
+}
+
+.schedule-page__style-003 {
+  composes: input from global;
+}
+
+.schedule-page__style-004 {
+  composes: input from global;
+}
+
+.schedule-page__style-005 {
+  composes: input from global;
+}
+
+.schedule-page__style-006 {
+  composes: input from global;
+}
+
+.schedule-page__style-007 {
+  @apply flex items-end;
+}
+
+.schedule-page__table-select {
+  @apply min-w-32;
+}
+
+.schedule-page__table-field {
+  composes: input from global;
+  @apply min-w-28;
+}
+
+.schedule-page__time-fields {
+  @apply grid min-w-40 grid-cols-2 gap-2;
+}
+
+.schedule-page__table-actions {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.schedule-page__action-button {
+  composes: focus-ring from global;
+  @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-md border px-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+.schedule-page__action-button--save {
+  @apply border-transparent bg-black text-white hover:bg-slate-800;
+}
+
+.schedule-page__action-button--ghost {
+  @apply border-slate-200 bg-white text-slate-700 hover:bg-slate-50;
+}
+
+.schedule-page__button-icon {
+  @apply h-4 w-4;
+}
+
+.schedule-page__style-008 {
+  @apply inline-flex min-h-10 items-center gap-2 rounded-full border border-transparent bg-brand-100 px-4 text-sm font-medium text-black;
+}
+
+.schedule-page__style-009 {
+  @apply h-4 w-4 text-black;
+}
+
+.schedule-page__style-010 {
+  @apply grid gap-4 border-b border-slate-200 p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-[180px_180px_minmax(0,1fr)];
+}
+
+.schedule-page__style-011 {
+  composes: input from global;
+}
+
+.schedule-page__style-012 {
+  @apply rounded-lg border border-slate-200 bg-slate-50 px-4 py-3;
+}
+
+.schedule-page__style-013 {
+  @apply text-xs font-bold uppercase text-slate-600;
+}
+
+.schedule-page__style-014 {
+  @apply mt-1 font-semibold text-slate-950;
+}
+
+.schedule-page__style-015 {
+  @apply overflow-x-auto border-b border-slate-200;
+}
+
+.schedule-page__style-016 {
+  @apply grid border-b border-slate-200 bg-slate-50 text-xs font-bold uppercase text-slate-600;
+}
+
+.schedule-page__style-017 {
+  @apply sticky left-0 z-20 border-r border-slate-200 bg-slate-50 px-4 py-3;
+}
+
+.schedule-page__style-018 {
+  @apply ml-1 font-semibold normal-case text-slate-500;
+}
+
+.schedule-page__style-019 {
+  @apply grid border-b border-slate-100 last:border-b-0;
+}
+
+.schedule-page__style-020 {
+  @apply sticky left-0 z-10 border-r border-slate-200 bg-white px-4 py-4 shadow-[8px_0_14px_rgba(15,23,42,0.04)];
+}
+
+.schedule-page__style-021 {
+  @apply mt-2 text-xs text-slate-600;
+}
+
+.schedule-page__style-022 {
+  @apply mt-2 text-xs font-semibold text-slate-700;
+}
+
+.schedule-page__style-023 {
+  @apply font-normal text-slate-500;
+}
+
+.schedule-page__style-024 {
+  @apply self-center text-center text-xs font-semibold text-slate-600;
+}
+
+.schedule-page__style-025 {
+  @apply grid gap-5 p-4 sm:p-5 xl:grid-cols-[minmax(0,1fr)_360px];
+}
+
+.schedule-page__style-026 {
+  @apply mb-3 flex items-center justify-between gap-3;
+}
+
+.schedule-page__style-027 {
+  @apply text-sm font-bold text-slate-950;
+}
+
+.schedule-page__style-028 {
+  @apply rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-600;
+}
+
+.schedule-page__style-029 {
+  @apply grid gap-3;
+}
+
+.schedule-page__style-030 {
+  @apply rounded-lg border border-slate-200 bg-white p-3;
+}
+
+.schedule-page__style-031 {
+  @apply flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between;
+}
+
+.schedule-page__style-032 {
+  @apply min-w-0;
+}
+
+.schedule-page__style-033 {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.schedule-page__style-034 {
+  @apply h-4 w-4 text-slate-500;
+}
+
+.schedule-page__style-035 {
+  @apply mt-2 text-sm text-slate-600;
+}
+
+.schedule-page__style-036 {
+  @apply rounded-lg border border-dashed border-slate-200 bg-slate-50 p-5 text-center text-sm text-slate-600;
+}
+
+.schedule-page__style-037 {
+  @apply grid gap-4;
+}
+
+.schedule-page__style-038 {
+  @apply grid gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4;
+}
+
+.schedule-page__style-039 {
+  @apply text-sm font-bold text-slate-950;
+}
+
+.schedule-page__style-040 {
+  @apply text-xs text-slate-600;
+}
+
+.schedule-page__style-041 {
+  @apply grid grid-cols-2 gap-3;
+}
+
+.schedule-page__style-042 {
+  composes: input from global;
+}
+
+.schedule-page__style-043 {
+  composes: input from global;
+}
+
+.schedule-page__style-044 {
+  composes: input from global;
+}
+
+.schedule-page__style-045 {
+  @apply grid gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4;
+}
+
+.schedule-page__style-046 {
+  @apply text-sm font-bold text-slate-950;
+}
+
+.schedule-page__style-047 {
+  @apply text-xs text-slate-600;
+}
+
+.schedule-page__style-048 {
+  composes: input from global;
+}
+
+.schedule-page__style-049 {
+  @apply grid min-w-0 gap-1.5;
+}
+
+.schedule-page__style-050 {
+  @apply min-w-0;
+}
+
+.schedule-page__style-051 {
+  @apply h-4 w-4 shrink-0;
+}
+
+.schedule-page__style-052 {
+  @apply truncate;
+}
+
+.schedule-page__style-053 {
+  @apply mt-1 truncate text-xs font-semibold text-slate-700;
+}
+
+.schedule-page__style-054 {
+  @apply min-w-0;
+}
+
+.schedule-page__style-055 {
+  @apply mt-2 truncate text-xs text-slate-600;
+}
+
+.schedule-page__style-056 {
+  @apply mt-2 grid min-w-0 gap-2;
+}
+
+.schedule-page__style-057 {
+  @apply min-w-0 truncate text-[11px] font-semibold text-slate-600;
+}
+
+.schedule-page__style-058 {
+  @apply inline-flex min-w-0 justify-end gap-1;
+}
+
+.schedule-page__style-059 {
+  composes: focus-ring from global;
+  @apply inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 hover:bg-slate-50;
+}
+
+.schedule-page__style-060 {
+  @apply h-4 w-4;
+}
+
+.schedule-page__style-061 {
+  composes: focus-ring from global;
+  @apply inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 hover:bg-slate-50;
+}
+
+.schedule-page__style-062 {
+  @apply h-4 w-4;
+}
+
+.schedule-page__style-063 {
+  @apply fixed z-[80] max-h-56 overflow-y-auto rounded-md border border-slate-200 bg-white p-1 shadow-soft;
+  overscroll-behavior: contain;
+}
+
+.schedule-page__style-064 {
+  @apply truncate;
+}
+
+.schedule-page__style-065 {
+  @apply fixed z-[80] max-h-56 overflow-y-auto rounded-md border border-slate-200 bg-white p-1 shadow-soft;
+  overscroll-behavior: contain;
+}
+
+.schedule-page__timeline-heading-cell {
+  @apply border-r border-slate-200 px-3 py-3 last:border-r-0;
+}
+
+.schedule-page__timeline-heading-cell--today {
+  @apply bg-brand-50 text-brand-800;
+}
+
+.schedule-page__timeline-cell {
+  @apply min-h-28 border-r border-slate-100 p-2 last:border-r-0;
+}
+
+.schedule-page__timeline-cell--weekend {
+  @apply bg-slate-100/70;
+}
+
+.schedule-page__timeline-cell--weekday {
+  @apply bg-slate-50/60;
+}
+
+.schedule-page__timeline-cell--today {
+  @apply bg-brand-50/60;
+}
+
+.schedule-page__slot-bucket {
+  @apply grid min-h-24 gap-2 rounded-md border border-dashed p-2;
+}
+
+.schedule-page__slot-bucket--filled {
+  @apply border-slate-300 bg-white shadow-sm;
+}
+
+.schedule-page__slot-bucket--empty {
+  @apply border-slate-200 bg-white/70;
+}
+
+.schedule-page__assignment-card {
+  @apply relative w-full min-w-0 max-w-full overflow-hidden rounded-md border p-2 shadow-sm;
+}
+
+.schedule-page__assignment-title {
+  @apply flex min-w-0 items-center gap-1.5 text-sm font-bold;
+}
+
+.schedule-page__assignment-edit-form {
+  @apply grid gap-2;
+}
+
+.schedule-page__assignment-edit-control {
+  composes: input from global;
+  @apply min-w-0 text-xs;
+}
+
+.schedule-page__picker-button {
+  composes: focus-ring from global;
+  @apply flex min-h-11 w-full items-center gap-2 rounded-md px-2 text-left text-xs font-semibold;
+}
+
+.schedule-page__picker-button--active {
+  @apply bg-black text-white;
+}
+
+.schedule-page__picker-button--idle {
+  @apply text-black hover:bg-brand-100;
+}
+
+.schedule-page__picker-marker {
+  @apply h-2.5 w-2.5 rounded-full;
+}
+
+.schedule-page__period-button {
+  composes: focus-ring from global;
+  @apply min-h-11 w-full rounded-md px-2 text-left text-xs font-semibold;
+}
+
+.schedule-page__period-button--active {
+  @apply bg-black text-white;
+}
+
+.schedule-page__period-button--idle {
+  @apply text-black hover:bg-brand-100;
+}

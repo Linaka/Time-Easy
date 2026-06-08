@@ -1,0 +1,28 @@
+.page-heading {
+  @apply flex flex-col justify-between gap-3 sm:flex-row sm:items-end;
+}
+
+.page-heading__title {
+  @apply text-3xl font-bold leading-10 tracking-normal text-black outline-none sm:text-[2.5rem] sm:leading-[44px];
+  color: var(--theme-strong, #000000);
+}
+
+.page-heading__subtitle {
+  @apply mt-1 max-w-xl text-sm text-[#5e5e5e];
+  color: var(--theme-muted, #5e5e5e);
+}
+
+.page-heading__week-total {
+  @apply inline-flex items-center gap-2 text-sm font-medium xl:hidden;
+  color: var(--theme-muted, #5e5e5e);
+}
+
+.page-heading__week-icon {
+  @apply h-4 w-4;
+  color: var(--theme-muted, #5e5e5e);
+}
+
+.page-heading__week-value {
+  @apply font-bold text-slate-950;
+  color: var(--theme-strong, #020617);
+}

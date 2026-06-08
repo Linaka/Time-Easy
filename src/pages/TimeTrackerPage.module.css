@@ -1,0 +1,475 @@
+.time-tracker-page__style-001 {
+  @apply rounded-full border border-transparent bg-brand-100 px-3 py-2 text-sm;
+}
+
+.time-tracker-page__style-002 {
+  @apply font-medium text-[#5e5e5e];
+}
+
+.time-tracker-page__style-003 {
+  @apply font-semibold text-slate-950;
+}
+
+.time-tracker-page__style-004 {
+  @apply rounded-2xl border border-brand-200 bg-white p-4;
+}
+
+.time-tracker-page__style-005 {
+  @apply sr-only;
+}
+
+.time-tracker-page__style-006 {
+  @apply flex flex-wrap items-start gap-2 xl:grid xl:grid-cols-[minmax(280px,1fr)_minmax(160px,180px)_minmax(96px,110px)_48px_110px_90px_48px_48px];
+}
+
+.time-tracker-page__style-007 {
+  @apply min-w-[min(100%,280px)] flex-[1_1_320px] xl:min-w-0 xl:flex-none;
+}
+
+.time-tracker-page__style-008 {
+  @apply sr-only;
+}
+
+.time-tracker-page__style-009 {
+  @apply sr-only;
+}
+
+.time-tracker-page__style-010 {
+  @apply mt-1 text-sm font-medium text-red-700;
+}
+
+.time-tracker-page__style-011 {
+  @apply min-w-[min(100%,220px)] flex-[0_1_240px] xl:min-w-0 xl:flex-none;
+}
+
+.time-tracker-page__style-012 {
+  @apply sr-only;
+}
+
+.time-tracker-page__style-013 {
+  composes: focus-ring from global;
+  @apply min-h-12 w-full rounded-md border border-transparent bg-brand-100 pl-4 pr-10 text-sm font-medium leading-5 text-black;
+}
+
+.time-tracker-page__style-014 {
+  @apply focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-black flex min-h-12 min-w-[min(100%,150px)] flex-[0_1_160px] items-center gap-2 rounded-full border border-transparent bg-brand-100 px-4 text-sm font-medium leading-5 text-black xl:min-w-0 xl:flex-none;
+}
+
+.time-tracker-page__style-015 {
+  @apply h-5 w-5 text-slate-500;
+}
+
+.time-tracker-page__style-016 {
+  @apply sr-only;
+}
+
+.time-tracker-page__style-017 {
+  @apply min-w-0 flex-1 border-0 bg-transparent text-sm font-medium leading-5 outline-none placeholder:font-normal placeholder:text-slate-500;
+}
+
+.time-tracker-page__style-018 {
+  @apply relative inline-flex min-w-12;
+}
+
+.time-tracker-page__style-019 {
+  @apply h-5 w-5;
+}
+
+.time-tracker-page__style-020 {
+  @apply invisible absolute bottom-full right-0 z-30 mb-2 w-64 rounded-md bg-slate-950 px-3 py-2 text-left text-xs text-white opacity-0 shadow-soft;
+}
+
+.time-tracker-page__style-021 {
+  @apply block font-bold;
+}
+
+.time-tracker-page__style-022 {
+  @apply mt-1 block text-slate-200;
+}
+
+.time-tracker-page__style-023 {
+  @apply flex min-h-12 min-w-0 items-center justify-center rounded-full border border-transparent bg-brand-100 px-3 font-mono text-sm font-bold leading-5 tabular-nums text-black;
+}
+
+.time-tracker-page__style-024 {
+  @apply relative inline-flex min-w-12;
+}
+
+.time-tracker-page__style-025 {
+  composes: focus-ring from global;
+  @apply inline-flex min-h-12 min-w-12 items-center justify-center rounded-full border border-transparent bg-brand-100 text-black hover:bg-brand-200;
+}
+
+.time-tracker-page__style-026 {
+  @apply h-5 w-5;
+}
+
+.time-tracker-page__style-027 {
+  @apply invisible absolute bottom-full right-0 z-30 mb-2 w-60 rounded-md bg-slate-950 px-3 py-2 text-left text-xs text-white opacity-0 shadow-soft;
+}
+
+.time-tracker-page__style-018:hover .time-tracker-page__style-020,
+.time-tracker-page__style-018:focus-within .time-tracker-page__style-020,
+.time-tracker-page__style-024:hover .time-tracker-page__style-027,
+.time-tracker-page__style-024:focus-within .time-tracker-page__style-027 {
+  opacity: 1;
+  visibility: visible;
+}
+
+.time-tracker-page__style-028 {
+  @apply block font-bold;
+}
+
+.time-tracker-page__style-029 {
+  @apply mt-1 block text-slate-200;
+}
+
+.time-tracker-page__style-030 {
+  @apply relative inline-flex min-w-12;
+}
+
+.time-tracker-page__style-031 {
+  composes: focus-ring from global;
+  @apply inline-flex min-h-12 min-w-12 items-center justify-center rounded-full border border-transparent bg-brand-100 text-black hover:bg-brand-200;
+}
+
+.time-tracker-page__style-032 {
+  @apply h-5 w-5;
+}
+
+.time-tracker-page__style-033 {
+  @apply absolute right-0 top-14 z-30 w-56 rounded-2xl border border-brand-200 bg-white p-1 text-left shadow-soft;
+}
+
+.time-tracker-page__style-034 {
+  composes: focus-ring from global;
+  @apply flex min-h-10 w-full items-center gap-2 rounded-full px-4 text-sm font-medium text-black hover:bg-brand-100;
+}
+
+.time-tracker-page__style-035 {
+  @apply h-4 w-4 text-slate-500;
+}
+
+.time-tracker-page__style-036 {
+  composes: focus-ring from global;
+  @apply flex min-h-10 w-full items-center gap-2 rounded-full px-4 text-sm font-medium text-black hover:bg-brand-100;
+}
+
+.time-tracker-page__style-037 {
+  @apply h-4 w-4 text-slate-500;
+}
+
+.time-tracker-page__style-038 {
+  composes: focus-ring from global;
+  @apply flex min-h-10 w-full items-center gap-2 rounded-full px-4 text-sm font-medium text-black hover:bg-brand-100;
+}
+
+.time-tracker-page__style-039 {
+  @apply h-4 w-4 text-slate-500;
+}
+
+.time-tracker-page__style-040 {
+  @apply mt-4 grid gap-3 border-t border-slate-200 pt-4 sm:grid-cols-[180px_180px_auto];
+}
+
+.time-tracker-page__style-041 {
+  composes: focus-ring from global;
+  @apply min-h-11 w-full rounded-md border border-slate-200 px-3 text-sm;
+}
+
+.time-tracker-page__style-042 {
+  composes: focus-ring from global;
+  @apply min-h-11 w-full rounded-md border border-slate-200 px-3 text-sm;
+}
+
+.time-tracker-page__style-043 {
+  @apply flex items-start sm:pt-[26px];
+}
+
+.time-tracker-page__style-044 {
+  composes: focus-ring from global;
+  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-slate-900 px-4 text-sm font-bold text-white hover:bg-slate-800;
+  background: var(--theme-accent, #0f172a);
+  color: var(--theme-on-accent, #ffffff);
+}
+
+.time-tracker-page__style-044:hover {
+  background: var(--theme-accent-hover, #1e293b);
+}
+
+.time-tracker-page__style-045 {
+  @apply h-4 w-4;
+}
+
+.time-tracker-page__style-046 {
+  @apply divide-y divide-slate-200;
+}
+
+.time-tracker-page__style-047 {
+  @apply flex items-center justify-between bg-slate-50 px-4 py-3 sm:px-5;
+}
+
+.time-tracker-page__style-048 {
+  @apply text-sm font-semibold uppercase tracking-normal text-slate-700;
+}
+
+.time-tracker-page__style-049 {
+  @apply text-sm font-semibold text-slate-900;
+}
+
+.time-tracker-page__style-050 {
+  @apply grid gap-3 p-3 sm:hidden;
+}
+
+.time-tracker-page__style-051 {
+  @apply hidden overflow-x-auto sm:block;
+}
+
+.time-tracker-page__style-052 {
+  @apply w-full min-w-[960px] table-fixed;
+}
+
+.time-tracker-page__style-053 {
+  @apply sr-only;
+}
+
+.time-tracker-page__style-054 {
+  @apply w-[23%];
+}
+
+.time-tracker-page__style-055 {
+  @apply w-[25%];
+}
+
+.time-tracker-page__style-056 {
+  @apply w-[22%];
+}
+
+.time-tracker-page__style-057 {
+  @apply w-[9%];
+}
+
+.time-tracker-page__style-058 {
+  @apply w-[10%];
+}
+
+.time-tracker-page__style-059 {
+  @apply w-[11%];
+}
+
+.time-tracker-page__style-060 {
+  @apply sr-only;
+}
+
+.time-tracker-page__style-061 {
+  @apply divide-y divide-slate-100;
+}
+
+.time-tracker-page__style-062 {
+  @apply rounded-xl border border-brand-200 bg-white p-4;
+}
+
+.time-tracker-page__style-063 {
+  @apply flex items-start justify-between gap-3;
+}
+
+.time-tracker-page__style-064 {
+  @apply min-w-0;
+}
+
+.time-tracker-page__style-065 {
+  @apply text-sm font-semibold leading-5 text-slate-950;
+}
+
+.time-tracker-page__style-066 {
+  @apply mt-1 text-xs text-slate-600;
+}
+
+.time-tracker-page__style-067 {
+  @apply shrink-0 font-mono text-sm font-semibold tabular-nums text-slate-950;
+}
+
+.time-tracker-page__style-068 {
+  @apply mt-3 grid gap-3;
+}
+
+.time-tracker-page__style-069 {
+  @apply flex items-center gap-2 text-sm font-medium text-slate-700;
+}
+
+.time-tracker-page__style-070 {
+  @apply h-4 w-4 shrink-0 text-slate-500;
+}
+
+.time-tracker-page__style-071 {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.time-tracker-page__style-072 {
+  @apply bg-white hover:bg-slate-50;
+}
+
+.time-tracker-page__style-073 {
+  @apply w-[23%] px-4 py-2.5 align-middle sm:px-5;
+}
+
+.time-tracker-page__style-074 {
+  @apply min-w-0;
+}
+
+.time-tracker-page__style-075 {
+  @apply text-sm font-semibold leading-5 text-slate-950;
+}
+
+.time-tracker-page__style-076 {
+  @apply mt-0.5 text-xs text-slate-600;
+}
+
+.time-tracker-page__style-077 {
+  @apply w-[25%] px-3 py-2.5 align-middle;
+}
+
+.time-tracker-page__style-078 {
+  @apply grid gap-1;
+}
+
+.time-tracker-page__style-079 {
+  @apply flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-slate-600;
+}
+
+.time-tracker-page__style-080 {
+  @apply w-[22%] px-3 py-2.5 align-middle;
+}
+
+.time-tracker-page__style-081 {
+  @apply inline-flex items-center gap-2 whitespace-nowrap text-sm font-medium text-slate-700;
+}
+
+.time-tracker-page__style-082 {
+  @apply h-4 w-4 shrink-0 text-slate-500;
+}
+
+.time-tracker-page__style-083 {
+  @apply whitespace-nowrap;
+}
+
+.time-tracker-page__style-084 {
+  @apply w-[9%] px-3 py-2.5 text-right align-middle text-sm font-semibold text-slate-950;
+}
+
+.time-tracker-page__style-085 {
+  @apply font-mono tabular-nums;
+}
+
+.time-tracker-page__style-086 {
+  @apply sr-only;
+}
+
+.time-tracker-page__style-087 {
+  @apply w-[10%] px-3 py-2.5 align-middle;
+}
+
+.time-tracker-page__style-088 {
+  @apply w-[11%] px-3 py-2.5 align-middle;
+}
+
+.time-tracker-page__style-089 {
+  @apply relative flex justify-end gap-2;
+}
+
+.time-tracker-page__style-090 {
+  @apply h-4 w-4 fill-current;
+}
+
+.time-tracker-page__style-091 {
+  @apply h-4 w-4;
+}
+
+.time-tracker-page__style-092 {
+  composes: focus-ring from global;
+  @apply flex min-h-11 w-full items-center gap-2 rounded-full px-4 text-sm font-medium text-black hover:bg-brand-100;
+}
+
+.time-tracker-page__style-093 {
+  @apply h-4 w-4 text-black;
+}
+
+.time-tracker-page__style-094 {
+  composes: focus-ring from global;
+  @apply flex min-h-11 w-full items-center gap-2 rounded-full px-4 text-sm font-medium text-black hover:bg-brand-100;
+}
+
+.time-tracker-page__style-095 {
+  @apply h-4 w-4 text-slate-500;
+}
+
+.time-tracker-page__style-096 {
+  composes: focus-ring from global;
+  @apply flex min-h-11 w-full items-center gap-2 rounded-full px-4 text-sm font-medium text-black hover:bg-brand-100;
+}
+
+.time-tracker-page__style-097 {
+  @apply h-4 w-4 text-slate-500;
+}
+
+.time-tracker-page__task-input {
+  composes: focus-ring from global;
+  @apply min-h-12 w-full rounded-md border bg-brand-100 px-4 text-sm font-medium leading-5 text-black placeholder:font-normal placeholder:text-slate-500;
+}
+
+.time-tracker-page__task-input--invalid {
+  @apply border-red-500;
+}
+
+.time-tracker-page__task-input--valid {
+  @apply border-slate-200;
+}
+
+.time-tracker-page__billable-button {
+  composes: focus-ring from global;
+  @apply inline-flex min-h-12 min-w-12 items-center justify-center rounded-full border px-0;
+}
+
+.time-tracker-page__billable-button--active {
+  @apply border-transparent bg-black text-white;
+  background: var(--theme-accent, #000000);
+  color: var(--theme-on-accent, #ffffff);
+}
+
+.time-tracker-page__billable-button--inactive {
+  @apply border-transparent bg-brand-100 text-black hover:bg-brand-200;
+}
+
+.time-tracker-page__timer-button {
+  composes: focus-ring from global;
+  @apply inline-flex min-h-12 items-center justify-center rounded-full px-4 text-sm font-semibold leading-5;
+}
+
+.time-tracker-page__timer-button--running {
+  @apply bg-slate-900 text-white hover:bg-slate-800;
+  background: var(--theme-accent-hover, #0f172a);
+  color: var(--theme-on-accent, #ffffff);
+}
+
+.time-tracker-page__timer-button--stopped {
+  @apply bg-black text-white hover:bg-brand-800;
+  background: var(--theme-accent, #000000);
+  color: var(--theme-on-accent, #ffffff);
+}
+
+.time-tracker-page__timer-button--running:hover,
+.time-tracker-page__timer-button--stopped:hover {
+  background: var(--theme-accent-hover, #282828);
+}
+
+.time-tracker-page__entry-menu {
+  @apply absolute right-0 z-30 w-56 rounded-2xl border border-brand-200 bg-white p-1 text-left shadow-soft;
+}
+
+.time-tracker-page__entry-menu--compact {
+  @apply top-10;
+}
+
+.time-tracker-page__entry-menu--regular {
+  @apply top-12;
+}

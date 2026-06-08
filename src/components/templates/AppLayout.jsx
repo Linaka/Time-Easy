@@ -1,37 +1,56 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   PageHeading,
   QuickClockPanel,
   Sidebar,
   TopBar
 } from "../organisms/index.js";
+import { cx } from "../classNames.js";
+import { GuidedWalkthrough } from "./GuidedWalkthrough.jsx";
+import { WORKSPACE_THEME_IDS } from "../../domain/appConfig.js";
+import { sectionUsesQuickClock } from "../../domain/sections.js";
+import styles from "./AppLayout.module.css";
+
+const SIDEBAR_COLLAPSED_STORAGE_KEY = "creative-operations-sidebar-collapsed";
 
 export function AppLayout({
-  activeSection,
-  activeUtility,
-  activeProjects,
   children,
-  currentUser,
-  employmentGrades,
-  onNavigate,
-  onQuickClockToggle,
-  onQuickDescriptionChange,
-  onQuickProjectChange,
-  onSettingChange,
-  onUtilityClose,
-  onUtilityToggle,
-  pageSubtitle,
-  pendingApprovalCount,
-  quickDescription,
-  quickProjectId,
-  quickRunning,
-  quickSeconds,
+  guidance,
+  metrics,
+  navigation,
+  quickClock,
   statusMessage,
-  weeklyTotal,
-  workspaceSettings
+  workspace
 }) {
+  const {
+    activeSection,
+    activeUtility,
+    onNavigate,
+    onUtilityClose,
+    onUtilityToggle,
+    pageSubtitle
+  } = navigation;
+  const {
+    activeProjects,
+    currentUser,
+    employmentGrades,
+    onClearDemoData,
+    onSettingChange,
+    settings: workspaceSettings
+  } = workspace;
+  const {
+    pendingApprovalCount,
+    weeklyTotal
+  } = metrics;
   const headingRef = useRef(null);
   const hasMountedRef = useRef(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    if (typeof window === "undefined") {
+      return false;
+    }
+
+    return window.localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY) === "true";
+  });
 
   useEffect(() => {
     document.title = `${activeSection} | Creative Operations`;
@@ -44,18 +63,40 @@ export function AppLayout({
     hasMountedRef.current = true;
   }, [activeSection]);
 
+  useEffect(() => {
+    window.localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, String(sidebarCollapsed));
+  }, [sidebarCollapsed]);
+
+  const showQuickClockPanel = sectionUsesQuickClock(activeSection);
+  const themeClassName = {
+    [WORKSPACE_THEME_IDS.SOFT_STUDIO]: styles["app-layout--theme-soft-studio"],
+    [WORKSPACE_THEME_IDS.KAWAII_POP]: styles["app-layout--theme-kawaii-pop"]
+  }[workspaceSettings.themeId];
+  const isKawaiiPopTheme = workspaceSettings.themeId === WORKSPACE_THEME_IDS.KAWAII_POP;
+
   return (
     <div
-      className={`min-h-screen bg-brand-50 text-black ${
-        workspaceSettings.compactTables ? "[&_td]:py-2 [&_th]:py-2" : ""
-      }`}
+      className={cx(
+        styles["app-layout"],
+        themeClassName,
+        workspaceSettings.compactTables ? styles["app-layout--compact-tables"] : null
+      )}
     >
       <a
         href="#main-content"
-        className="focus-ring fixed left-4 top-4 z-50 -translate-y-16 rounded-full bg-black px-5 py-2 text-sm font-medium text-white shadow-pill transition focus-visible:translate-y-0"
+        className={styles["app-layout__skip-link"]}
       >
         Skip to content
       </a>
+
+      {isKawaiiPopTheme ? (
+        <div className={styles["app-layout__clouds"]} aria-hidden="true">
+          <span className={cx(styles["app-layout__cloud"], styles["app-layout__cloud--one"])} />
+          <span className={cx(styles["app-layout__cloud"], styles["app-layout__cloud--two"])} />
+          <span className={cx(styles["app-layout__cloud"], styles["app-layout__cloud--three"])} />
+          <span className={cx(styles["app-layout__cloud"], styles["app-layout__cloud--four"])} />
+        </div>
+      ) : null}
 
       <TopBar
         weeklyTotal={weeklyTotal}
@@ -69,23 +110,35 @@ export function AppLayout({
         currentUser={currentUser}
         employmentGrades={employmentGrades}
         activeProjects={activeProjects}
-        quickDescription={quickDescription}
-        quickProjectId={quickProjectId}
-        quickRunning={quickRunning}
-        quickSeconds={quickSeconds}
-        onQuickDescriptionChange={onQuickDescriptionChange}
-        onQuickProjectChange={onQuickProjectChange}
-        onQuickClockToggle={onQuickClockToggle}
+        quickDescription={quickClock.description}
+        quickProjectId={quickClock.projectId}
+        quickRunning={quickClock.running}
+        quickSeconds={quickClock.seconds}
+        onClearDemoData={onClearDemoData}
+        onQuickDescriptionChange={quickClock.onDescriptionChange}
+        onQuickProjectChange={quickClock.onProjectChange}
+        onQuickClockToggle={quickClock.onToggle}
       />
 
-      <div className="pt-16 lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
-        <Sidebar activeSection={activeSection} onNavigate={onNavigate} />
+      <div
+        className={cx(
+          styles["app-layout__shell"],
+          sidebarCollapsed ? styles["app-layout__shell--sidebar-collapsed"] : null
+        )}
+      >
+        <Sidebar
+          activeSection={activeSection}
+          collapsed={sidebarCollapsed}
+          currentUser={currentUser}
+          onNavigate={onNavigate}
+          onToggleCollapsed={() => setSidebarCollapsed((current) => !current)}
+        />
 
         <main
           id="main-content"
-          className="min-w-0 px-4 py-6 sm:px-6 lg:col-start-2 lg:px-8"
+          className={styles["app-layout__main"]}
         >
-          <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+          <div className={styles["app-layout__content"]}>
             <PageHeading
               title={activeSection}
               weeklyTotal={weeklyTotal}
@@ -93,25 +146,39 @@ export function AppLayout({
               headingRef={headingRef}
             />
 
-            <QuickClockPanel
-              activeProjects={activeProjects}
-              description={quickDescription}
-              projectId={quickProjectId}
-              running={quickRunning}
-              seconds={quickSeconds}
-              onDescriptionChange={onQuickDescriptionChange}
-              onProjectChange={onQuickProjectChange}
-              onToggle={onQuickClockToggle}
-            />
+            {showQuickClockPanel ? (
+              <QuickClockPanel
+                activeProjects={activeProjects}
+                description={quickClock.description}
+                projectId={quickClock.projectId}
+                running={quickClock.running}
+                seconds={quickClock.seconds}
+                onDescriptionChange={quickClock.onDescriptionChange}
+                onProjectChange={quickClock.onProjectChange}
+                onToggle={quickClock.onToggle}
+              />
+            ) : null}
 
             {children}
           </div>
         </main>
       </div>
 
-      <div className="sr-status" role="status" aria-live="polite" aria-atomic="true">
+      <div className={styles["app-layout__status"]} role="status" aria-live="polite" aria-atomic="true">
         {statusMessage}
       </div>
+
+      <GuidedWalkthrough
+        promptOpen={guidance.promptOpen}
+        step={guidance.step}
+        stepCount={guidance.stepCount}
+        stepIndex={guidance.stepIndex}
+        onBack={guidance.onBack}
+        onDecline={guidance.onDecline}
+        onNext={guidance.onNext}
+        onSkip={guidance.onSkip}
+        onStart={guidance.onStart}
+      />
     </div>
   );
 }

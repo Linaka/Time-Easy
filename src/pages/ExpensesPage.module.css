@@ -1,0 +1,35 @@
+.expenses-page__style-001 {
+  @apply grid gap-5;
+}
+
+.expenses-page__style-002 {
+  @apply grid gap-4 md:grid-cols-3;
+}
+
+.expenses-page__style-003 {
+  @apply grid gap-4 p-4 sm:grid-cols-2 sm:p-5 xl:grid-cols-7;
+}
+
+.expenses-page__style-004 {
+  composes: input from global;
+}
+
+.expenses-page__style-005 {
+  composes: input from global;
+}
+
+.expenses-page__style-006 {
+  composes: input from global;
+}
+
+.expenses-page__style-007 {
+  composes: input from global;
+}
+
+.expenses-page__style-008 {
+  @apply flex items-end;
+}
+
+.expenses-page__style-009 {
+  @apply font-semibold text-slate-950;
+}

@@ -1,0 +1,33 @@
+.error-boundary {
+  @apply grid min-h-screen place-items-center bg-brand-50 p-6 text-black;
+  background: var(--theme-page, #f3f3f3);
+  color: var(--theme-text, #000000);
+}
+
+.error-boundary__panel {
+  @apply w-full max-w-lg rounded-2xl border border-brand-200 bg-white p-6;
+  background: var(--theme-surface, #ffffff);
+  border-color: var(--theme-border, #e2e2e2);
+}
+
+.error-boundary__eyebrow {
+  @apply text-sm font-medium text-[#5e5e5e];
+  color: var(--theme-muted, #5e5e5e);
+}
+
+.error-boundary__title {
+  @apply mt-2 text-3xl font-bold;
+}
+
+.error-boundary__body {
+  @apply mt-3 text-sm leading-6 text-[#5e5e5e];
+  color: var(--theme-muted, #5e5e5e);
+}
+
+.error-boundary__button {
+  @apply mt-5 inline-flex min-h-11 items-center justify-center rounded-full bg-black px-5 text-sm font-medium text-white;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black;
+  background: var(--theme-accent, #000000);
+  color: var(--theme-on-accent, #ffffff);
+  outline-color: var(--theme-focus, #000000);
+}

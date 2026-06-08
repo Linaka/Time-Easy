@@ -11,16 +11,16 @@ export function createInitialProjects() {
 
 export function createInitialTeamMembers() {
   return [
-    { id: "ava", name: "Ava Morgan", email: "ava@timetrackr.local", role: "Design Lead", status: "Active", capacityHours: 40, gradeId: "grade-4" },
-    { id: "noah", name: "Noah Kim", email: "noah@timetrackr.local", role: "Frontend Engineer", status: "Active", capacityHours: 40, gradeId: "grade-3" },
-    { id: "mia", name: "Mia Patel", email: "mia@timetrackr.local", role: "Operations", status: "Active", capacityHours: 32, gradeId: "grade-2" }
+    { id: "ava", name: "Ava Morgan", email: "ava@timetrackr.local", role: "Design Lead", accessRole: "Owner", status: "Active", capacityHours: 40, gradeId: "grade-4" },
+    { id: "noah", name: "Noah Kim", email: "noah@timetrackr.local", role: "Frontend Engineer", accessRole: "Manager", status: "Active", capacityHours: 40, gradeId: "grade-3" },
+    { id: "mia", name: "Mia Patel", email: "mia@timetrackr.local", role: "Operations", accessRole: "Member", status: "Active", capacityHours: 32, gradeId: "grade-2" }
   ];
 }
 
 export function createInitialEntries(todayKey) {
   const yesterdayKey = getLocalDateKey(addDays(dateFromKey(todayKey), -1));
   return [
-    { id: "entry-1", dateKey: todayKey, memberId: "ava", description: "Illustrations", projectId: "acme", tags: ["EUR", "Invoiced"], billable: true, timeRange: "1:00 PM - 3:00 PM", durationSeconds: 7200, approvalStatus: "Approved", source: "Timer" },
+    { id: "entry-1", dateKey: todayKey, memberId: "ava", description: "Illustrations", projectId: "acme", tags: ["GBP", "Invoiced"], billable: true, timeRange: "1:00 PM - 3:00 PM", durationSeconds: 7200, approvalStatus: "Approved", source: "Timer" },
     { id: "entry-2", dateKey: todayKey, memberId: "noah", description: "Fixing bug #212", projectId: "project-x", tags: [], billable: true, timeRange: "9:30 AM - 1:00 PM", durationSeconds: 12600, approvalStatus: "Approved", source: "Timer" },
     { id: "entry-3", dateKey: todayKey, memberId: "mia", description: "Filing tax return", projectId: "office", tags: ["Overtime"], billable: false, timeRange: "8:00 AM - 9:30 AM", durationSeconds: 5400, approvalStatus: "Approved", source: "Manual" },
     { id: "entry-4", dateKey: yesterdayKey, memberId: "noah", description: "Developing new feature", projectId: "project-x", tags: ["Overtime"], billable: true, timeRange: "3:00 PM - 6:00 PM", durationSeconds: 10800, approvalStatus: "Approved", source: "Timer" },

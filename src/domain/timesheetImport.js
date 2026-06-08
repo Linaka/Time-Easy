@@ -7,8 +7,18 @@ import {
 import { getLocalDateKey } from "./dateUtils.js";
 import { parseTags } from "./formUtils.js";
 
+export const TIMESHEET_CSV_MAX_BYTES = 1024 * 1024;
+export const TIMESHEET_CSV_MAX_FIELD_CHARS = 1000;
+export const TIMESHEET_CSV_MAX_ROWS = 1000;
+
 export function buildTimesheetImportPreview({ csvText, projects, teamMembers }) {
-  return parseCsvRecords(csvText).map((record, index) => {
+  const records = parseCsvRecords(validateTimesheetCsvText(csvText));
+
+  if (records.length > TIMESHEET_CSV_MAX_ROWS) {
+    throw new Error(`Timesheet CSV must contain ${TIMESHEET_CSV_MAX_ROWS} rows or fewer.`);
+  }
+
+  return records.map((record, index) => {
     const errors = [];
     const rawDate = csvValue(record, ["date", "work_date", "entry_date", "day"]);
     const rawDescription = csvValue(record, ["task", "description", "work", "activity"]);
@@ -17,6 +27,7 @@ export function buildTimesheetImportPreview({ csvText, projects, teamMembers }) 
     const rawDuration = csvValue(record, ["duration", "time", "hours", "minutes"]);
     const rawBillable = csvValue(record, ["billable", "billing", "is_billable"]);
     const rawTags = csvValue(record, ["tags", "tag", "labels"]);
+    const fieldValues = [rawDate, rawDescription, rawProject, rawMember, rawDuration, rawBillable, rawTags];
     const dateKey = parseImportDate(rawDate);
     const project = findImportProject(rawProject, projects);
     const member = rawMember ? findImportMember(rawMember, teamMembers) : teamMembers[0];
@@ -31,6 +42,9 @@ export function buildTimesheetImportPreview({ csvText, projects, teamMembers }) 
     }
     if (!isSafeDisplayText(rawDescription) || !isSafeDisplayText(rawTags)) {
       errors.push("Unsafe text blocked");
+    }
+    if (fieldValues.some((fieldValue) => fieldValue.length > TIMESHEET_CSV_MAX_FIELD_CHARS)) {
+      errors.push(`Fields must be ${TIMESHEET_CSV_MAX_FIELD_CHARS} characters or fewer`);
     }
     if (!project) {
       errors.push("Project not found");
@@ -67,6 +81,16 @@ export function buildTimesheetImportPreview({ csvText, projects, teamMembers }) 
       }
     };
   });
+}
+
+function validateTimesheetCsvText(csvText) {
+  const text = String(csvText || "");
+
+  if (text.length > TIMESHEET_CSV_MAX_BYTES) {
+    throw new Error("Timesheet CSV is too large to import.");
+  }
+
+  return text;
 }
 
 function csvValue(record, keys) {

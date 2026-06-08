@@ -1,4 +1,5 @@
 import { formatDuration } from "../timeUtils.js";
+import { DEFAULT_CURRENCY } from "./appConfig.js";
 
 export function formatDurationLabel(totalSeconds) {
   const [hoursValue, minutesValue] = formatDuration(totalSeconds).split(":");
@@ -28,7 +29,7 @@ export function sessionDuration(session) {
 export function currency(value) {
   return new Intl.NumberFormat("en-GB", {
     style: "currency",
-    currency: "GBP",
+    currency: DEFAULT_CURRENCY,
     maximumFractionDigits: 0
   }).format(Number(value || 0));
 }

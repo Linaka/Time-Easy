@@ -1,0 +1,27 @@
+.dashboard-page__style-001 {
+  @apply grid gap-4 md:grid-cols-2 xl:grid-cols-4;
+}
+
+.dashboard-page__style-002 {
+  @apply grid gap-5 xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)];
+}
+
+.dashboard-page__style-003 {
+  @apply space-y-4 p-4 sm:p-5;
+}
+
+.dashboard-page__style-004 {
+  @apply mb-2 flex items-center justify-between gap-3 text-sm;
+}
+
+.dashboard-page__style-005 {
+  @apply font-mono font-semibold text-slate-950;
+}
+
+.dashboard-page__style-006 {
+  @apply h-3 overflow-hidden rounded-full bg-slate-100;
+}
+
+.dashboard-page__progress-fill {
+  @apply h-full rounded-full;
+}

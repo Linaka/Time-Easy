@@ -1,0 +1,160 @@
+.metric-card {
+  @apply rounded-2xl border border-brand-200 bg-white p-5;
+  background: var(--theme-surface, #ffffff);
+  border-color: var(--theme-border, #e2e2e2);
+}
+
+.metric-card__header {
+  @apply flex items-center justify-between gap-3;
+}
+
+.metric-card__label {
+  @apply text-sm font-medium text-[#5e5e5e];
+  color: var(--theme-muted, #5e5e5e);
+}
+
+.metric-card__icon-shell {
+  @apply inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand-100 text-black;
+  background: var(--theme-surface-muted, #efefef);
+  color: var(--theme-text, #000000);
+}
+
+.metric-card__icon {
+  @apply h-5 w-5;
+}
+
+.metric-card__value {
+  @apply mt-3 text-2xl font-bold leading-8 text-black;
+  color: var(--theme-strong, #000000);
+}
+
+.metric-card__helper {
+  @apply mt-1 text-sm text-[#5e5e5e];
+  color: var(--theme-muted, #5e5e5e);
+}
+
+.data-table {
+  @apply overflow-x-auto;
+}
+
+.data-table__table {
+  @apply w-full min-w-full table-fixed;
+}
+
+.data-table__heading-row {
+  @apply border-b border-brand-200 bg-white text-left text-xs font-medium uppercase text-[#5e5e5e];
+  background: var(--theme-surface, #ffffff);
+  border-color: var(--theme-border, #e2e2e2);
+  color: var(--theme-muted, #5e5e5e);
+}
+
+.data-table__heading-cell {
+  @apply px-4 py-3 align-top;
+  overflow-wrap: anywhere;
+}
+
+.data-table__body {
+  @apply divide-y divide-slate-100;
+  border-color: var(--theme-border-soft, #efefef);
+}
+
+.data-table__body > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--theme-border-soft, #efefef);
+}
+
+.data-table__row {
+  @apply bg-white hover:bg-brand-50;
+  background: var(--theme-surface, #ffffff);
+}
+
+.data-table__row:hover {
+  background: var(--theme-page-subtle, #f3f3f3);
+}
+
+.data-table__cell {
+  @apply px-4 py-4 align-top text-sm text-black;
+  color: var(--theme-text, #000000);
+  overflow-wrap: anywhere;
+}
+
+.data-table__empty-cell {
+  @apply px-4 py-10 text-center text-sm text-[#5e5e5e];
+  color: var(--theme-muted, #5e5e5e);
+}
+
+@media (max-width: 639px) {
+  .data-table {
+    @apply overflow-visible;
+  }
+
+  .data-table__table {
+    @apply min-w-0;
+  }
+
+  .data-table__table thead {
+    @apply sr-only;
+  }
+
+  .data-table__body {
+    @apply block space-y-3 p-3;
+  }
+
+  .data-table__row {
+    @apply grid gap-3 rounded-xl border border-brand-200 bg-white p-4 hover:bg-white;
+    background: var(--theme-surface, #ffffff);
+    border-color: var(--theme-border, #e2e2e2);
+  }
+
+  .data-table__cell {
+    @apply grid gap-1 px-0 py-0 text-sm;
+  }
+
+  .data-table__cell::before {
+    content: attr(data-label);
+    @apply text-xs font-bold uppercase text-[#5e5e5e];
+    color: var(--theme-muted, #5e5e5e);
+  }
+
+  .data-table__empty-cell {
+    @apply block rounded-xl border border-brand-200 bg-white px-4 py-10;
+    background: var(--theme-surface, #ffffff);
+    border-color: var(--theme-border, #e2e2e2);
+  }
+}
+
+.activity-list {
+  @apply divide-y divide-slate-100;
+  border-color: var(--theme-border-soft, #efefef);
+}
+
+.activity-list > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--theme-border-soft, #efefef);
+}
+
+.activity-list__item {
+  @apply flex gap-3 px-4 py-4 sm:px-5;
+}
+
+.activity-list__marker {
+  @apply mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-black;
+  background: var(--theme-accent, #000000);
+}
+
+.activity-list__content {
+  @apply min-w-0;
+}
+
+.activity-list__description {
+  @apply text-sm font-medium text-black;
+  color: var(--theme-text, #000000);
+}
+
+.activity-list__meta {
+  @apply mt-1 text-xs text-[#5e5e5e];
+  color: var(--theme-muted, #5e5e5e);
+}
+
+.activity-list__empty {
+  @apply px-4 py-10 text-center text-sm text-[#5e5e5e];
+  color: var(--theme-muted, #5e5e5e);
+}

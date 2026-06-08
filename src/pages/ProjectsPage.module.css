@@ -1,0 +1,152 @@
+.projects-page__style-001 {
+  @apply flex flex-wrap items-center justify-end gap-2;
+}
+
+.projects-page__style-002 {
+  composes: focus-ring from global;
+  @apply inline-flex h-10 w-10 items-center justify-center rounded-full bg-black text-white hover:bg-brand-800;
+  background: var(--theme-accent, #000000);
+  color: var(--theme-on-accent, #ffffff);
+}
+
+.projects-page__style-002:hover {
+  background: var(--theme-accent-hover, #282828);
+}
+
+.projects-page__style-003 {
+  @apply h-4 w-4;
+}
+
+.projects-page__style-004 {
+  @apply grid gap-3 p-4 sm:p-5;
+}
+
+.projects-page__style-005 {
+  @apply rounded-lg border border-slate-200 bg-white p-4;
+}
+
+.projects-page__style-006 {
+  @apply flex flex-col justify-between gap-3 sm:flex-row sm:items-start;
+}
+
+.projects-page__style-007 {
+  @apply mt-2 text-sm text-slate-600;
+}
+
+.projects-page__style-008 {
+  @apply mt-2;
+}
+
+.projects-page__style-009 {
+  @apply flex flex-wrap gap-2;
+}
+
+.projects-page__style-010 {
+  @apply mt-4;
+}
+
+.projects-page__style-011 {
+  @apply mb-2 flex justify-between text-sm;
+}
+
+.projects-page__style-012 {
+  @apply text-slate-600;
+}
+
+.projects-page__style-013 {
+  @apply font-mono font-semibold text-slate-950;
+}
+
+.projects-page__style-014 {
+  @apply h-3 overflow-hidden rounded-full bg-slate-100;
+}
+
+.projects-page__style-015 {
+  @apply mt-4 flex flex-col gap-2 border-t border-slate-100 pt-4 sm:flex-row sm:items-end;
+}
+
+.projects-page__style-016 {
+  composes: input from global;
+  @apply min-w-[260px];
+}
+
+.projects-page__style-017 {
+  composes: focus-ring from global;
+  @apply min-h-11 rounded-full border border-transparent bg-black px-4 text-sm font-medium text-white hover:bg-brand-800;
+  background: var(--theme-accent, #000000);
+  color: var(--theme-on-accent, #ffffff);
+}
+
+.projects-page__style-017:hover {
+  background: var(--theme-accent-hover, #282828);
+}
+
+.projects-page__style-018 {
+  @apply fixed inset-0 z-[60] grid place-items-center bg-slate-950/55 px-4 py-6;
+}
+
+.projects-page__style-019 {
+  @apply w-full max-w-lg overflow-hidden rounded-lg border border-brand-200 bg-white text-black shadow-soft;
+}
+
+.projects-page__style-020 {
+  @apply flex items-start justify-between gap-4 border-b border-brand-100 px-5 py-4;
+}
+
+.projects-page__style-021 {
+  @apply text-lg font-bold leading-7 text-black;
+}
+
+.projects-page__style-022 {
+  @apply text-sm text-[#5e5e5e];
+}
+
+.projects-page__style-023 {
+  composes: focus-ring from global;
+  @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-white text-black hover:bg-slate-50;
+}
+
+.projects-page__style-024 {
+  @apply h-4 w-4;
+}
+
+.projects-page__style-025 {
+  @apply grid gap-4 p-5;
+}
+
+.projects-page__style-026 {
+  composes: input from global;
+}
+
+.projects-page__style-027 {
+  composes: input from global;
+}
+
+.projects-page__style-028 {
+  @apply grid gap-4 sm:grid-cols-2;
+}
+
+.projects-page__style-029 {
+  composes: input from global;
+}
+
+.projects-page__style-030 {
+  composes: input from global;
+}
+
+.projects-page__style-031 {
+  composes: input from global;
+}
+
+.projects-page__style-032 {
+  @apply flex flex-wrap justify-end gap-2;
+}
+
+.projects-page__style-033 {
+  composes: focus-ring from global;
+  @apply inline-flex min-h-11 items-center justify-center rounded-full border border-transparent bg-brand-100 px-4 text-sm font-medium text-black hover:bg-brand-200;
+}
+
+.projects-page__progress-fill {
+  @apply h-full rounded-full;
+}
