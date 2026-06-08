@@ -1,4 +1,4 @@
-import { ACCESS_ROLES } from "../../domain/auth.js";
+import { ACCESS_ROLES, getAccessRole } from "../../domain/auth.js";
 import { slugify, validatePlainFields } from "../../domain/formUtils.js";
 import {
   getEmploymentGrade,
@@ -54,8 +54,17 @@ export function createTeamCommands({
       return false;
     }
 
-    if (teamMembers.length <= 1) {
+    const isLastMember = teamMembers.length <= 1;
+    const ownerCount = teamMembers.filter((currentMember) => getAccessRole(currentMember) === "Owner").length;
+    const isDeletingLastOwner = getAccessRole(member) === "Owner" && ownerCount <= 1;
+
+    if (isLastMember) {
       setStatusMessage("Add another owner before deleting the last workspace member.");
+      return false;
+    }
+
+    if (isDeletingLastOwner) {
+      setStatusMessage("Add another owner before deleting the last workspace owner.");
       return false;
     }
 

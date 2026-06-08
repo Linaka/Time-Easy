@@ -4,6 +4,7 @@ import {
   Clock3,
   FileCheck2,
   Gauge,
+  LogOut,
   Palette,
   Sparkles,
   Trash2,
@@ -28,6 +29,7 @@ export function UtilityPanel({
   workspaceSettings,
   onSettingChange,
   onClearDemoData,
+  onSwitchUser,
   onNavigate,
   onClose,
   currentUser,
@@ -158,6 +160,9 @@ export function UtilityPanel({
             <PrimaryButton onClick={() => handleNavigate("Team")} icon={UserCircle2}>
               Manage profile
             </PrimaryButton>
+            <GhostButton onClick={onSwitchUser} icon={LogOut}>
+              Switch user
+            </GhostButton>
             <GhostButton onClick={() => handleNavigate("Time Tracker")} icon={Clock3}>
               Track time
             </GhostButton>

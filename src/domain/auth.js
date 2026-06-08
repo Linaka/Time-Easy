@@ -28,21 +28,39 @@ export const EMPTY_WORKSPACE_OWNER = Object.freeze({
   gradeId: "grade-4"
 });
 
-export function resolveCurrentUser(teamMembers) {
-  const members = Array.isArray(teamMembers) ? teamMembers : [];
-  return (
-    members.find((member) => member.id === DEFAULT_OWNER_ID) ||
-    members[0] ||
-    EMPTY_WORKSPACE_OWNER
-  );
-}
-
 export function getAccessRole(user) {
   if (ACCESS_ROLES.includes(user?.accessRole)) {
     return user.accessRole;
   }
 
   return user?.id === DEFAULT_OWNER_ID ? "Owner" : "Member";
+}
+
+export function ensureWorkspaceOwner(teamMembers) {
+  const members = Array.isArray(teamMembers) ? teamMembers : [];
+  if (!members.length || members.some((member) => getAccessRole(member) === "Owner")) {
+    return members;
+  }
+
+  return members.map((member, index) =>
+    index === 0 ? { ...member, accessRole: "Owner" } : member
+  );
+}
+
+export function resolveCurrentUser(teamMembers, selectedUserId) {
+  const members = ensureWorkspaceOwner(teamMembers);
+  const selectedMember = selectedUserId
+    ? members.find((member) => member.id === selectedUserId)
+    : null;
+
+  return (
+    selectedMember ||
+    members.find((member) => member.id === DEFAULT_OWNER_ID) ||
+    members.find((member) => getAccessRole(member) === "Owner") ||
+    members.find((member) => getAccessRole(member) === "Manager") ||
+    members[0] ||
+    EMPTY_WORKSPACE_OWNER
+  );
 }
 
 export function getRolePermissions(role) {

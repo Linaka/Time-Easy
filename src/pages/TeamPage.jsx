@@ -16,7 +16,7 @@ import {
   StatusBadge
 } from "../components/ui.jsx";
 import { sumDurations } from "../timeUtils.js";
-import { ACCESS_ROLES } from "../domain/auth.js";
+import { ACCESS_ROLES, getAccessRole } from "../domain/auth.js";
 import {
   currency,
   formatDurationLabel
@@ -61,7 +61,23 @@ export function TeamPage({
       .toLowerCase()
       .includes(query.toLowerCase())
   );
-  const canDeleteMembers = teamMembers.length > 1;
+  const ownerCount = teamMembers.filter((member) => getAccessRole(member) === "Owner").length;
+
+  function canDeleteMember(member) {
+    return teamMembers.length > 1 && !(getAccessRole(member) === "Owner" && ownerCount <= 1);
+  }
+
+  function deleteMemberTitle(member) {
+    if (teamMembers.length <= 1) {
+      return "Add another owner before deleting the last workspace member";
+    }
+
+    if (getAccessRole(member) === "Owner" && ownerCount <= 1) {
+      return "Add another owner before deleting the last workspace owner";
+    }
+
+    return `Delete ${member.name}`;
+  }
 
   useEffect(() => {
     setGradeDrafts(
@@ -225,6 +241,7 @@ export function TeamPage({
           {visibleMembers.map((member) => {
             const trackedSeconds = sumDurations(entries.filter((entry) => entry.memberId === member.id));
             const grade = getEmploymentGrade(member.gradeId, employmentGrades);
+            const canDeleteCurrentMember = canDeleteMember(member);
             return (
               <article key={member.id} className={styles["team-page__style-026"]}>
                 <div className={styles["team-page__style-032"]}>
@@ -256,8 +273,8 @@ export function TeamPage({
                   </GhostButton>
                   <DangerButton
                     onClick={() => onDeleteTeamMember(member.id)}
-                    disabled={!canDeleteMembers}
-                    title={canDeleteMembers ? `Delete ${member.name}` : "Add another owner before deleting the last workspace member"}
+                    disabled={!canDeleteCurrentMember}
+                    title={deleteMemberTitle(member)}
                     aria-label={`Delete ${member.name}`}
                     icon={Trash2}
                     className={styles["team-page__action-button"]}
