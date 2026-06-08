@@ -1,4 +1,6 @@
 const ISO_DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const DAY_SLOT_MIN_WIDTH = 168;
+const YEAR_SLOT_MIN_WIDTH = 180;
 
 export function buildGanttTimeline(timelineMode, startDateKey, todayKey = getLocalDateKey(new Date())) {
   const safeStartKey = ISO_DATE_KEY_PATTERN.test(String(startDateKey || ""))
@@ -34,7 +36,7 @@ export function buildGanttTimeline(timelineMode, startDateKey, todayKey = getLoc
       slots,
       startKey: slots[0].startKey,
       endKey: slots[slots.length - 1].endKey,
-      slotMinWidth: 150,
+      slotMinWidth: YEAR_SLOT_MIN_WIDTH,
       rangeLabel: `${formatPlanningDate(slots[0].startKey)} - ${formatPlanningDate(slots[slots.length - 1].endKey)}`
     };
   }
@@ -64,7 +66,7 @@ export function buildGanttTimeline(timelineMode, startDateKey, todayKey = getLoc
     slots,
     startKey: slots[0].startKey,
     endKey: slots[slots.length - 1].endKey,
-    slotMinWidth: 112,
+    slotMinWidth: DAY_SLOT_MIN_WIDTH,
     rangeLabel: `${formatPlanningDate(slots[0].startKey)} - ${formatPlanningDate(slots[slots.length - 1].endKey)}`
   };
 }

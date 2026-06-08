@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, {
+  useRef,
+  useState
+} from "react";
 import {
   Check,
   PauseCircle,
   Pencil,
   Plus,
-  X
+  Trash2
 } from "lucide-react";
 import {
   DataTable,
@@ -25,7 +28,7 @@ import {
   memberName
 } from "../domain/projectUtils.js";
 import { GanttChart } from "./schedule/GanttChart.jsx";
-import { createScheduleEditDraft } from "./schedule/scheduleDrafts.js";
+import { ScheduleEditModal } from "./schedule/ScheduleEditModal.jsx";
 import styles from "./SchedulePage.module.css";
 
 export function SchedulePage({
@@ -38,6 +41,7 @@ export function SchedulePage({
   onUpdateSchedule,
   onScheduleStatusChange,
   onMoveScheduleProject,
+  onDeleteSchedule,
   onAddDependency,
   onDeleteDependency
 }) {
@@ -50,111 +54,23 @@ export function SchedulePage({
     location: "Remote"
   });
   const [editingScheduleId, setEditingScheduleId] = useState(null);
-  const [scheduleDraft, setScheduleDraft] = useState(null);
+  const modalReturnFocusRef = useRef(null);
+  const editingScheduleItem = scheduleItems.find((item) => item.id === editingScheduleId);
 
-  function startScheduleEdit(item) {
+  function startScheduleEdit(item, event) {
+    modalReturnFocusRef.current = event.currentTarget;
     setEditingScheduleId(item.id);
-    setScheduleDraft(createScheduleEditDraft(item));
   }
 
   function cancelScheduleEdit() {
+    const returnFocusTarget = modalReturnFocusRef.current;
     setEditingScheduleId(null);
-    setScheduleDraft(null);
-  }
-
-  function saveScheduleEdit() {
-    if (!editingScheduleId || !scheduleDraft) {
-      return;
-    }
-
-    if (onUpdateSchedule(editingScheduleId, scheduleDraft)) {
-      cancelScheduleEdit();
-    }
+    window.requestAnimationFrame(() => returnFocusTarget?.focus({ preventScroll: true }));
   }
 
   const scheduleRows = scheduleItems.map((item) => {
-    const isEditing = item.id === editingScheduleId && scheduleDraft;
     const memberLabel = memberName(item.memberId, teamMembers);
     const readableDate = formatReadableDate(item.dateKey);
-
-    if (isEditing) {
-      return [
-        <Select
-          id={`${item.id}-schedule-person`}
-          value={scheduleDraft.memberId}
-          onChange={(value) => setFormValue(setScheduleDraft, "memberId", value)}
-          className={styles["schedule-page__table-select"]}
-          aria-label={`Person for scheduled block on ${readableDate}`}
-        >
-          {teamMembers.map((member) => (
-            <option key={member.id} value={member.id}>
-              {member.name}
-            </option>
-          ))}
-        </Select>,
-        <Select
-          id={`${item.id}-schedule-project`}
-          value={scheduleDraft.projectId}
-          onChange={(value) => setFormValue(setScheduleDraft, "projectId", value)}
-          className={styles["schedule-page__table-select"]}
-          aria-label={`Project for ${memberLabel}`}
-        >
-          {projects.map((project) => (
-            <option key={project.id} value={project.id}>
-              {project.name}
-            </option>
-          ))}
-        </Select>,
-        <DateInput
-          id={`${item.id}-schedule-date`}
-          value={scheduleDraft.dateKey}
-          onChange={(value) => setFormValue(setScheduleDraft, "dateKey", value)}
-          className={styles["schedule-page__table-field"]}
-          aria-label={`Date for ${memberLabel}`}
-        />,
-        <div className={styles["schedule-page__time-fields"]}>
-          <input
-            type="time"
-            value={scheduleDraft.start}
-            onChange={(event) => setFormValue(setScheduleDraft, "start", event.target.value)}
-            className={styles["schedule-page__table-field"]}
-            aria-label={`Start time for ${memberLabel}`}
-          />
-          <input
-            type="time"
-            value={scheduleDraft.end}
-            onChange={(event) => setFormValue(setScheduleDraft, "end", event.target.value)}
-            className={styles["schedule-page__table-field"]}
-            aria-label={`End time for ${memberLabel}`}
-          />
-        </div>,
-        <input
-          value={scheduleDraft.location}
-          onChange={(event) => setFormValue(setScheduleDraft, "location", event.target.value)}
-          className={styles["schedule-page__table-field"]}
-          aria-label={`Label or location for ${memberLabel}`}
-        />,
-        <StatusBadge status={item.status} />,
-        <div className={styles["schedule-page__table-actions"]}>
-          <button
-            type="button"
-            onClick={saveScheduleEdit}
-            className={cx(styles["schedule-page__action-button"], styles["schedule-page__action-button--save"])}
-          >
-            <Check className={styles["schedule-page__button-icon"]} aria-hidden="true" />
-            Save
-          </button>
-          <button
-            type="button"
-            onClick={cancelScheduleEdit}
-            className={cx(styles["schedule-page__action-button"], styles["schedule-page__action-button--ghost"])}
-          >
-            <X className={styles["schedule-page__button-icon"]} aria-hidden="true" />
-            Cancel
-          </button>
-        </div>
-      ];
-    }
 
     return [
       memberLabel,
@@ -166,12 +82,21 @@ export function SchedulePage({
       <div className={styles["schedule-page__table-actions"]}>
         <button
           type="button"
-          onClick={() => startScheduleEdit(item)}
+          onClick={(event) => startScheduleEdit(item, event)}
           className={cx(styles["schedule-page__action-button"], styles["schedule-page__action-button--ghost"])}
           aria-label={`Edit schedule for ${memberLabel} on ${readableDate}`}
         >
           <Pencil className={styles["schedule-page__button-icon"]} aria-hidden="true" />
           Edit
+        </button>
+        <button
+          type="button"
+          onClick={() => onDeleteSchedule(item.id)}
+          className={cx(styles["schedule-page__action-button"], styles["schedule-page__action-button--danger"])}
+          aria-label={`Delete schedule for ${memberLabel} on ${readableDate}`}
+        >
+          <Trash2 className={styles["schedule-page__button-icon"]} aria-hidden="true" />
+          Delete
         </button>
         <RowActions
           primaryLabel="Publish"
@@ -192,6 +117,16 @@ export function SchedulePage({
 
   return (
     <div className={styles["schedule-page__style-001"]}>
+      {editingScheduleItem ? (
+        <ScheduleEditModal
+          item={editingScheduleItem}
+          projects={projects}
+          teamMembers={teamMembers}
+          onClose={cancelScheduleEdit}
+          onUpdateSchedule={onUpdateSchedule}
+        />
+      ) : null}
+
       <GanttChart
         scheduleItems={scheduleItems}
         projects={projects}
@@ -201,6 +136,7 @@ export function SchedulePage({
         onAddSchedule={onAddSchedule}
         onUpdateSchedule={onUpdateSchedule}
         onMoveScheduleProject={onMoveScheduleProject}
+        onDeleteSchedule={onDeleteSchedule}
         onAddDependency={onAddDependency}
         onDeleteDependency={onDeleteDependency}
       />

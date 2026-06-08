@@ -149,6 +149,22 @@ export function createScheduleCommands({
     return true;
   }
 
+  function deleteScheduleItem(scheduleId) {
+    const scheduleItem = scheduleItems.find((item) => item.id === scheduleId);
+    if (!scheduleItem) {
+      setStatusMessage("Scheduled block was not found.");
+      return false;
+    }
+
+    setScheduleItems((currentItems) => currentItems.filter((item) => item.id !== scheduleId));
+    addActivity(
+      "Schedule",
+      `Deleted scheduled block for ${memberName(scheduleItem.memberId, teamMembers)}`
+    );
+    setStatusMessage("Schedule item deleted.");
+    return true;
+  }
+
   function updateScheduleStatus(scheduleId, nextStatus) {
     setScheduleItems((currentItems) =>
       currentItems.map((item) => (item.id === scheduleId ? { ...item, status: nextStatus } : item))
@@ -161,6 +177,7 @@ export function createScheduleCommands({
     addProjectDependency,
     addScheduleItem,
     deleteProjectDependency,
+    deleteScheduleItem,
     moveScheduleItemToProject,
     updateScheduleItem,
     updateScheduleStatus
