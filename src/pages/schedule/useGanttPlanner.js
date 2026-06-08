@@ -1,4 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 import { getLocalDateKey } from "../../domain/dateUtils.js";
 import { scheduleDurationSeconds } from "../../domain/scheduleUtils.js";
 import {
@@ -26,6 +32,11 @@ export function useGanttPlanner({
   const [timelineStart, setTimelineStart] = useState(
     weekDays.find((day) => day.isToday)?.dateKey || weekDays[0]?.dateKey || getLocalDateKey(new Date())
   );
+  const timelineScrollerRef = useRef(null);
+  const [timelineScrollState, setTimelineScrollState] = useState({
+    canScrollLeft: false,
+    canScrollRight: false
+  });
   const [planForm, setPlanForm] = useState({
     memberId: teamMembers[0]?.id || "",
     projectId: projects[0]?.id || "",
@@ -64,10 +75,40 @@ export function useGanttPlanner({
     (sum, item) => sum + scheduleDurationSeconds(item),
     0
   );
-  const timelineGridStyle = {
-    gridTemplateColumns: `${TIMELINE_LANE_WIDTH}px repeat(${timeline.slots.length}, minmax(${timeline.slotMinWidth}px, 1fr))`,
-    minWidth: `${Math.max(860, TIMELINE_LANE_WIDTH + timeline.slots.length * timeline.slotMinWidth)}px`
-  };
+  const timelineGridStyle = useMemo(
+    () => ({
+      gridTemplateColumns: `${TIMELINE_LANE_WIDTH}px repeat(${timeline.slots.length}, minmax(${timeline.slotMinWidth}px, 1fr))`,
+      minWidth: `${Math.max(860, TIMELINE_LANE_WIDTH + timeline.slots.length * timeline.slotMinWidth)}px`
+    }),
+    [timeline.slotMinWidth, timeline.slots.length]
+  );
+
+  const updateTimelineScrollState = useCallback(() => {
+    const scroller = timelineScrollerRef.current;
+    if (!scroller) {
+      return;
+    }
+
+    const maxScrollLeft = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+    setTimelineScrollState({
+      canScrollLeft: scroller.scrollLeft > 1,
+      canScrollRight: scroller.scrollLeft < maxScrollLeft - 1
+    });
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const animationFrame = window.requestAnimationFrame(updateTimelineScrollState);
+    window.addEventListener("resize", updateTimelineScrollState);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("resize", updateTimelineScrollState);
+    };
+  }, [timelineGridStyle, updateTimelineScrollState]);
 
   useEffect(() => {
     setPlanForm((current) => {
@@ -94,6 +135,22 @@ export function useGanttPlanner({
     const scheduleId = event.dataTransfer.getData("text/plain");
     if (scheduleId) {
       onMoveScheduleProject(scheduleId, projectId, slot.dropDateKey);
+    }
+  }
+
+  function scrollTimeline(direction) {
+    const scroller = timelineScrollerRef.current;
+    if (!scroller) {
+      return;
+    }
+
+    const scrollAmount = Math.max(scroller.clientWidth * 0.72, timeline.slotMinWidth);
+    scroller.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth"
+    });
+    if (typeof window !== "undefined") {
+      window.setTimeout(updateTimelineScrollState, 260);
     }
   }
 
@@ -124,6 +181,7 @@ export function useGanttPlanner({
     handleDrop,
     handlePlanSubmit,
     planForm,
+    scrollTimeline,
     setDependencyForm,
     setPlanForm,
     setTimelineMode,
@@ -131,7 +189,10 @@ export function useGanttPlanner({
     timeline,
     timelineGridStyle,
     timelineMode,
+    timelineScrollerRef,
     timelineScheduleItems,
-    timelineStart
+    timelineScrollState,
+    timelineStart,
+    updateTimelineScrollState
   };
 }

@@ -1,6 +1,8 @@
 import React from "react";
 import {
   ArrowRight,
+  ChevronLeft,
+  ChevronRight,
   GitBranch,
   Plus,
   Trash2
@@ -36,6 +38,7 @@ export function GanttChart({
   onAddSchedule,
   onUpdateSchedule,
   onMoveScheduleProject,
+  onDeleteSchedule,
   onAddDependency,
   onDeleteDependency
 }) {
@@ -82,95 +85,136 @@ export function GanttChart({
         </div>
       </div>
 
-      <div className={styles["schedule-page__style-015"]}>
-        <div style={planner.timelineGridStyle}>
-          <div className={styles["schedule-page__style-016"]} style={planner.timelineGridStyle}>
-            <div className={styles["schedule-page__style-017"]}>Project lane</div>
-            {planner.timeline.slots.map((slot) => (
-              <div
-                key={slot.key}
-                className={cx(
-                  styles["schedule-page__timeline-heading-cell"],
-                  slot.isToday ? styles["schedule-page__timeline-heading-cell--today"] : null
-                )}
-              >
-                <span>{slot.label}</span>
-                <span className={styles["schedule-page__style-018"]}>{slot.subLabel}</span>
-              </div>
-            ))}
-          </div>
-
-          {projects.map((project) => {
-            const projectScheduleItems = planner.timelineScheduleItems.filter((item) => item.projectId === project.id);
-            return (
-              <section
-                key={project.id}
-                aria-label={`${project.name} schedule lane`}
-                className={styles["schedule-page__style-019"]}
-                style={planner.timelineGridStyle}
-              >
-                <div className={styles["schedule-page__style-020"]}>
-                  <ProjectBadge project={project} />
-                  <p className={styles["schedule-page__style-021"]}>{project.client}</p>
-                  <p className={styles["schedule-page__style-022"]}>
-                    {formatDurationLabel(projectScheduleItems.reduce((sum, item) => sum + scheduleDurationSeconds(item), 0))}
-                    <span className={styles["schedule-page__style-023"]}> scheduled</span>
-                  </p>
+      <div
+        className={cx(
+          styles["schedule-page__timeline-frame"],
+          planner.timelineScrollState.canScrollLeft ? styles["schedule-page__timeline-frame--scroll-left"] : null,
+          planner.timelineScrollState.canScrollRight ? styles["schedule-page__timeline-frame--scroll-right"] : null
+        )}
+      >
+        <button
+          type="button"
+          onClick={() => planner.scrollTimeline("left")}
+          disabled={!planner.timelineScrollState.canScrollLeft}
+          aria-label="Scroll timeline left"
+          title="Scroll timeline left"
+          className={cx(
+            styles["schedule-page__timeline-scroll-button"],
+            styles["schedule-page__timeline-scroll-button--left"]
+          )}
+        >
+          <ChevronLeft className={styles["schedule-page__timeline-scroll-icon"]} aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          onClick={() => planner.scrollTimeline("right")}
+          disabled={!planner.timelineScrollState.canScrollRight}
+          aria-label="Scroll timeline right"
+          title="Scroll timeline right"
+          className={cx(
+            styles["schedule-page__timeline-scroll-button"],
+            styles["schedule-page__timeline-scroll-button--right"]
+          )}
+        >
+          <ChevronRight className={styles["schedule-page__timeline-scroll-icon"]} aria-hidden="true" />
+        </button>
+        <div
+          ref={planner.timelineScrollerRef}
+          onScroll={planner.updateTimelineScrollState}
+          className={styles["schedule-page__style-015"]}
+          tabIndex={0}
+          aria-label="Scrollable resource timeline"
+        >
+          <div style={planner.timelineGridStyle}>
+            <div className={styles["schedule-page__style-016"]} style={planner.timelineGridStyle}>
+              <div className={styles["schedule-page__style-017"]}>Project lane</div>
+              {planner.timeline.slots.map((slot) => (
+                <div
+                  key={slot.key}
+                  className={cx(
+                    styles["schedule-page__timeline-heading-cell"],
+                    slot.isToday ? styles["schedule-page__timeline-heading-cell--today"] : null
+                  )}
+                >
+                  <span>{slot.label}</span>
+                  <span className={styles["schedule-page__style-018"]}>{slot.subLabel}</span>
                 </div>
+              ))}
+            </div>
 
-                {planner.timeline.slots.map((slot) => {
-                  const slotItems = projectScheduleItems.filter((item) => scheduleItemIntersectsSlot(item, slot));
-                  return (
-                    <div
-                      key={`${project.id}-${slot.key}`}
-                      onDragOver={(event) => {
-                        event.preventDefault();
-                        event.dataTransfer.dropEffect = "move";
-                      }}
-                      onDrop={(event) => planner.handleDrop(event, project.id, slot)}
-                      className={cx(
-                        styles["schedule-page__timeline-cell"],
-                        slot.isWeekend
-                          ? styles["schedule-page__timeline-cell--weekend"]
-                          : styles["schedule-page__timeline-cell--weekday"],
-                        slot.isToday ? styles["schedule-page__timeline-cell--today"] : null
-                      )}
-                      aria-label={`Drop assignments onto ${project.name} during ${slot.accessibleLabel}`}
-                    >
+            {projects.map((project) => {
+              const projectScheduleItems = planner.timelineScheduleItems.filter((item) => item.projectId === project.id);
+              return (
+                <section
+                  key={project.id}
+                  aria-label={`${project.name} schedule lane`}
+                  className={styles["schedule-page__style-019"]}
+                  style={planner.timelineGridStyle}
+                >
+                  <div className={styles["schedule-page__style-020"]}>
+                    <ProjectBadge project={project} />
+                    <p className={styles["schedule-page__style-021"]}>{project.client}</p>
+                    <p className={styles["schedule-page__style-022"]}>
+                      {formatDurationLabel(projectScheduleItems.reduce((sum, item) => sum + scheduleDurationSeconds(item), 0))}
+                      <span className={styles["schedule-page__style-023"]}> scheduled</span>
+                    </p>
+                  </div>
+
+                  {planner.timeline.slots.map((slot) => {
+                    const slotItems = projectScheduleItems.filter((item) => scheduleItemIntersectsSlot(item, slot));
+                    return (
                       <div
+                        key={`${project.id}-${slot.key}`}
+                        onDragOver={(event) => {
+                          event.preventDefault();
+                          event.dataTransfer.dropEffect = "move";
+                        }}
+                        onDrop={(event) => planner.handleDrop(event, project.id, slot)}
                         className={cx(
-                          styles["schedule-page__slot-bucket"],
-                          slotItems.length
-                            ? styles["schedule-page__slot-bucket--filled"]
-                            : styles["schedule-page__slot-bucket--empty"]
+                          styles["schedule-page__timeline-cell"],
+                          slot.isWeekend
+                            ? styles["schedule-page__timeline-cell--weekend"]
+                            : styles["schedule-page__timeline-cell--weekday"],
+                          slot.isToday ? styles["schedule-page__timeline-cell--today"] : null
                         )}
+                        aria-label={`Drop assignments onto ${project.name} during ${slot.accessibleLabel}`}
                       >
-                        {slotItems.length ? (
-                          slotItems.map((item) => (
-                            <GanttAssignmentCard
-                              key={item.id}
-                              item={item}
-                              slot={slot}
-                              projects={projects}
-                              teamMembers={teamMembers}
-                              timelineSlots={planner.timeline.slots}
-                              onDragStart={planner.handleDragStart}
-                              onUpdateSchedule={onUpdateSchedule}
-                              onMoveScheduleProject={onMoveScheduleProject}
-                            />
-                          ))
-                        ) : (
-                          <span className={styles["schedule-page__style-024"]}>
-                            Drop here
-                          </span>
-                        )}
+                        <div
+                          className={cx(
+                            styles["schedule-page__slot-bucket"],
+                            slotItems.length
+                              ? styles["schedule-page__slot-bucket--filled"]
+                              : styles["schedule-page__slot-bucket--empty"]
+                          )}
+                        >
+                          {slotItems.length ? (
+                            slotItems.map((item) => (
+                              <GanttAssignmentCard
+                                key={item.id}
+                                item={item}
+                                slot={slot}
+                                projects={projects}
+                                teamMembers={teamMembers}
+                                timelineSlots={planner.timeline.slots}
+                                onDragStart={planner.handleDragStart}
+                                onUpdateSchedule={onUpdateSchedule}
+                                onMoveScheduleProject={onMoveScheduleProject}
+                                onDeleteSchedule={onDeleteSchedule}
+                              />
+                            ))
+                          ) : (
+                            <span className={styles["schedule-page__style-024"]}>
+                              Drop here
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </section>
-            );
-          })}
+                    );
+                  })}
+                </section>
+              );
+            })}
+          </div>
         </div>
       </div>
 

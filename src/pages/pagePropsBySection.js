@@ -14,6 +14,7 @@ export function buildPagePropsBySection({
   clockInKiosk,
   clockOutKiosk,
   deleteProjectDependency,
+  deleteScheduleItem,
   deleteTeamMember,
   employmentGrades,
   entries,
@@ -106,6 +107,7 @@ export function buildPagePropsBySection({
       onUpdateSchedule: updateScheduleItem,
       onScheduleStatusChange: updateScheduleStatus,
       onMoveScheduleProject: moveScheduleItemToProject,
+      onDeleteSchedule: deleteScheduleItem,
       onAddDependency: addProjectDependency,
       onDeleteDependency: deleteProjectDependency
     },
