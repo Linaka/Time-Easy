@@ -15,6 +15,7 @@ import {
   createInitialTeamMembers,
   createInitialTimeOff
 } from "../domain/seedData.js";
+import { ensureWorkspaceOwner } from "../domain/auth.js";
 import { usePersistentState } from "./usePersistentState.js";
 
 export function useWorkspaceState(todayKey) {
@@ -84,6 +85,13 @@ export function useWorkspaceState(todayKey) {
       ...(currentSettings && typeof currentSettings === "object" ? currentSettings : {})
     }));
   }, [setWorkspaceSettings, storedWorkspaceSettings]);
+
+  useEffect(() => {
+    const nextTeamMembers = ensureWorkspaceOwner(teamMembers);
+    if (nextTeamMembers !== teamMembers) {
+      setTeamMembers(nextTeamMembers);
+    }
+  }, [setTeamMembers, teamMembers]);
 
   return {
     activityItems,

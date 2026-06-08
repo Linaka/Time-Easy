@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   canAccessSection,
   canPerform,
+  ensureWorkspaceOwner,
   filterNavigationGroups,
   firstAccessibleSection,
   PERMISSIONS,
@@ -47,4 +48,41 @@ test("empty workspaces resolve to a setup owner so the team can recover", () => 
   assert.equal(user.accessRole, "Owner");
   assert.equal(canAccessSection(user, "Team"), true);
   assert.equal(canPerform(user, PERMISSIONS.MANAGE_SETTINGS), true);
+});
+
+test("selected current user controls view rights", () => {
+  const user = resolveCurrentUser(
+    [
+      { id: "ava", accessRole: "Owner" },
+      { id: "mia", accessRole: "Member" }
+    ],
+    "mia"
+  );
+
+  assert.equal(user.id, "mia");
+  assert.equal(canAccessSection(user, "Time Tracker"), true);
+  assert.equal(canAccessSection(user, "Team"), false);
+});
+
+test("current user fallback preserves owner access after default owner is removed", () => {
+  const user = resolveCurrentUser([
+    { id: "mia", accessRole: "Member" },
+    { id: "sana", accessRole: "Owner" }
+  ]);
+
+  assert.equal(user.id, "sana");
+  assert.equal(canAccessSection(user, "Team"), true);
+  assert.equal(canPerform(user, PERMISSIONS.MANAGE_SETTINGS), true);
+});
+
+test("workspaces without an owner are normalized for recovery", () => {
+  const members = [
+    { id: "mia", accessRole: "Member" },
+    { id: "noah", accessRole: "Manager" }
+  ];
+  const normalizedMembers = ensureWorkspaceOwner(members);
+
+  assert.notEqual(normalizedMembers, members);
+  assert.equal(normalizedMembers[0].accessRole, "Owner");
+  assert.equal(normalizedMembers[1].accessRole, "Manager");
 });

@@ -35,6 +35,7 @@ export function AppLayout({
     currentUser,
     employmentGrades,
     onClearDemoData,
+    onSwitchUser,
     onSettingChange,
     settings: workspaceSettings
   } = workspace;
@@ -115,6 +116,7 @@ export function AppLayout({
         quickRunning={quickClock.running}
         quickSeconds={quickClock.seconds}
         onClearDemoData={onClearDemoData}
+        onSwitchUser={onSwitchUser}
         onQuickDescriptionChange={quickClock.onDescriptionChange}
         onQuickProjectChange={quickClock.onProjectChange}
         onQuickClockToggle={quickClock.onToggle}

@@ -1,5 +1,5 @@
 import React from "react";
-import { AppLayout } from "./components/templates/index.js";
+import { AppLayout, IdentityLaunch } from "./components/templates/index.js";
 import { getSectionDefinition } from "./domain/sections.js";
 import { useCreativeOperationsApp } from "./hooks/useCreativeOperationsApp.js";
 import * as PageComponents from "./pages/AppPages.jsx";
@@ -18,6 +18,7 @@ function App() {
     handleQuickClockToggle,
     handleSkipGuidance,
     handleStartGuidance,
+    identity,
     onClearDemoData,
     pagePropsBySection,
     pendingApprovalCount,
@@ -40,6 +41,19 @@ function App() {
   } = useCreativeOperationsApp();
 
   const activeSectionDefinition = getSectionDefinition(activeSection);
+  if (identity.requiresSelection) {
+    return (
+      <IdentityLaunch
+        employmentGrades={employmentGrades}
+        onSelectUser={identity.onSelectUser}
+        selectedUserId={identity.selectedUserId}
+        statusMessage={statusMessage}
+        teamMembers={identity.teamMembers}
+        workspaceSettings={workspaceSettings}
+      />
+    );
+  }
+
   const ActivePage = PageComponents[activeSectionDefinition?.componentName];
   const activePageProps = pagePropsBySection[activeSection] || {};
   const navigation = {
@@ -56,7 +70,8 @@ function App() {
     employmentGrades,
     settings: workspaceSettings,
     onClearDemoData,
-    onSettingChange: updateWorkspaceSetting
+    onSettingChange: updateWorkspaceSetting,
+    onSwitchUser: identity.onSwitchUser
   };
   const metrics = {
     pendingApprovalCount,

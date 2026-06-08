@@ -4,8 +4,7 @@ import {
   canAccessSection,
   canPerform,
   firstAccessibleSection,
-  PERMISSIONS,
-  resolveCurrentUser
+  PERMISSIONS
 } from "../domain/auth.js";
 import {
   dateFromKey,
@@ -18,6 +17,7 @@ import { createFreshWorkspace } from "../domain/workspaceSetup.js";
 import { buildPagePropsBySection } from "../pages/pagePropsBySection.js";
 import { trackClientEvent } from "../services/clientLogger.js";
 import { useDesktopWorkspaceActions } from "./useDesktopWorkspaceActions.js";
+import { useIdentitySelection } from "./useIdentitySelection.js";
 import { useOnboardingController } from "./useOnboardingController.js";
 import { useReportExportAction } from "./useReportExportAction.js";
 import { useTimeTrackingController } from "./useTimeTrackingController.js";
@@ -56,7 +56,17 @@ export function useCreativeOperationsApp() {
   const [activeUtility, setActiveUtility] = useState(null);
   const [reportFilters, setReportFilters] = useState(DEFAULT_REPORT_FILTERS);
   const [statusMessage, setStatusMessage] = useState("Timer ready.");
-  const currentUser = useMemo(() => resolveCurrentUser(teamMembers), [teamMembers]);
+  const {
+    currentUser,
+    identity,
+    setSelectedUserId
+  } = useIdentitySelection({
+    activeSection,
+    setActiveSection,
+    setActiveUtility,
+    setStatusMessage,
+    teamMembers
+  });
 
   const activeProjects = useMemo(
     () => projects.filter((project) => project.status !== "Archived"),
@@ -197,6 +207,7 @@ export function useCreativeOperationsApp() {
     setKioskSessions(freshWorkspace.kioskSessions);
     setActivityItems(freshWorkspace.activityItems);
     setWorkspaceSettings(freshWorkspace.workspaceSettings);
+    setSelectedUserId("");
     setReportFilters(DEFAULT_REPORT_FILTERS);
     timeTracking.resetDrafts({
       defaultBillable: freshWorkspace.workspaceSettings.defaultBillable,
@@ -282,6 +293,7 @@ export function useCreativeOperationsApp() {
     handleQuickClockToggle: timeTracking.handleQuickClockToggle,
     handleSkipGuidance: onboarding.handleSkipGuidance,
     handleStartGuidance: onboarding.handleStartGuidance,
+    identity,
     onClearDemoData: clearDemoDataForFreshSetup,
     pagePropsBySection,
     pendingApprovalCount,

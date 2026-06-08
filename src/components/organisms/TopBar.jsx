@@ -26,6 +26,7 @@ export function TopBar({
   workspaceSettings,
   onSettingChange,
   onClearDemoData,
+  onSwitchUser,
   currentUser,
   employmentGrades,
   activeProjects,
@@ -117,6 +118,7 @@ export function TopBar({
           workspaceSettings={workspaceSettings}
           onSettingChange={onSettingChange}
           onClearDemoData={onClearDemoData}
+          onSwitchUser={onSwitchUser}
           onNavigate={onNavigate}
           onClose={onUtilityClose}
           currentUser={currentUser}
