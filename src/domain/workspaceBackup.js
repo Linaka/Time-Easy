@@ -3,6 +3,11 @@ import { ACTIVITY_LIMIT, STORAGE_PREFIX } from "./appConfig.js";
 
 export const WORKSPACE_BACKUP_APP = "creative-operations";
 export const WORKSPACE_BACKUP_SCHEMA_VERSION = 1;
+export const WORKSPACE_BACKUP_MAX_BYTES = 5 * 1024 * 1024;
+const WORKSPACE_BACKUP_MAX_COLLECTION_RECORDS = 5000;
+const WORKSPACE_BACKUP_MAX_DEPTH = 8;
+const WORKSPACE_BACKUP_MAX_OBJECT_KEYS = 100;
+const WORKSPACE_BACKUP_MAX_TEXT_CHARS = 2000;
 
 const ARRAY_BACKUP_KEYS = [
   "projects",
@@ -42,10 +47,15 @@ export function createWorkspaceBackup(workspace, exportedAt = new Date().toISOSt
 }
 
 export function parseWorkspaceBackupText(backupText) {
+  const backupTextValue = String(backupText || "");
   let backup;
 
+  if (backupTextValue.length > WORKSPACE_BACKUP_MAX_BYTES) {
+    throw new Error("Workspace backup is too large to import.");
+  }
+
   try {
-    backup = JSON.parse(backupText);
+    backup = JSON.parse(backupTextValue);
   } catch {
     throw new Error("Workspace backup must be valid JSON.");
   }
@@ -82,6 +92,8 @@ export function validateWorkspaceBackup(backup) {
   ) {
     throw new Error("Workspace backup settings data must be an object.");
   }
+
+  enforceWorkspaceBackupLimits(backup.data);
 
   if (hasUnsafeText(backup.data)) {
     throw new Error("Workspace backup contains script-like text and was not imported.");
@@ -336,17 +348,68 @@ function stableStringify(value) {
   return JSON.stringify(value);
 }
 
-function hasUnsafeText(value) {
+function enforceWorkspaceBackupLimits(data) {
+  for (const key of ARRAY_BACKUP_KEYS) {
+    if (Array.isArray(data[key]) && data[key].length > WORKSPACE_BACKUP_MAX_COLLECTION_RECORDS) {
+      throw new Error(`Workspace backup ${key} data exceeds ${WORKSPACE_BACKUP_MAX_COLLECTION_RECORDS} records.`);
+    }
+  }
+
+  scanWorkspaceBackupValue(data, 0, new WeakSet());
+}
+
+function scanWorkspaceBackupValue(value, depth, seen) {
+  if (depth > WORKSPACE_BACKUP_MAX_DEPTH) {
+    throw new Error("Workspace backup is too deeply nested.");
+  }
+
+  if (typeof value === "string") {
+    if (value.length > WORKSPACE_BACKUP_MAX_TEXT_CHARS) {
+      throw new Error(`Workspace backup text fields must be ${WORKSPACE_BACKUP_MAX_TEXT_CHARS} characters or fewer.`);
+    }
+    return;
+  }
+
+  if (!value || typeof value !== "object") {
+    return;
+  }
+
+  if (seen.has(value)) {
+    throw new Error("Workspace backup contains a circular reference.");
+  }
+  seen.add(value);
+
+  if (Array.isArray(value)) {
+    if (value.length > WORKSPACE_BACKUP_MAX_COLLECTION_RECORDS) {
+      throw new Error(`Workspace backup arrays must contain ${WORKSPACE_BACKUP_MAX_COLLECTION_RECORDS} items or fewer.`);
+    }
+    value.forEach((item) => scanWorkspaceBackupValue(item, depth + 1, seen));
+    return;
+  }
+
+  const keys = Object.keys(value);
+  if (keys.length > WORKSPACE_BACKUP_MAX_OBJECT_KEYS) {
+    throw new Error(`Workspace backup objects must contain ${WORKSPACE_BACKUP_MAX_OBJECT_KEYS} keys or fewer.`);
+  }
+
+  keys.forEach((key) => scanWorkspaceBackupValue(value[key], depth + 1, seen));
+}
+
+function hasUnsafeText(value, seen = new WeakSet()) {
   if (typeof value === "string") {
     return !isSafeDisplayText(value);
   }
 
   if (Array.isArray(value)) {
-    return value.some(hasUnsafeText);
+    return value.some((item) => hasUnsafeText(item, seen));
   }
 
   if (value && typeof value === "object") {
-    return Object.values(value).some(hasUnsafeText);
+    if (seen.has(value)) {
+      return false;
+    }
+    seen.add(value);
+    return Object.values(value).some((item) => hasUnsafeText(item, seen));
   }
 
   return false;

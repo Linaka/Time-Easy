@@ -1,7 +1,7 @@
 import { isTauri } from "@tauri-apps/api/core";
 import { Menu } from "@tauri-apps/api/menu";
 import { confirm, message, open, save } from "@tauri-apps/plugin-dialog";
-import { readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
+import { readTextFile, stat, writeTextFile } from "@tauri-apps/plugin-fs";
 
 export function isDesktopRuntime() {
   try {
@@ -100,7 +100,7 @@ export async function setupDesktopMenu(handlers) {
   return () => {};
 }
 
-export async function openTextFile({ title, filters }) {
+export async function openTextFile({ title, filters, maxBytes }) {
   if (!isDesktopRuntime()) {
     return null;
   }
@@ -114,6 +114,16 @@ export async function openTextFile({ title, filters }) {
 
   if (!path || Array.isArray(path)) {
     return null;
+  }
+
+  if (maxBytes) {
+    const fileInfo = await stat(path);
+    if (!fileInfo.isFile) {
+      throw new Error("Selected item must be a file.");
+    }
+    if (fileInfo.size > maxBytes) {
+      throw new Error(`Selected file must be ${formatFileSize(maxBytes)} or smaller.`);
+    }
   }
 
   return {
@@ -174,4 +184,12 @@ export function downloadTextFile({ filename, mimeType, text }) {
   link.download = filename;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+function formatFileSize(bytes) {
+  if (bytes >= 1024 * 1024) {
+    return `${Math.floor(bytes / (1024 * 1024))} MB`;
+  }
+
+  return `${Math.floor(bytes / 1024)} KB`;
 }

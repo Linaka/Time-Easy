@@ -11,6 +11,7 @@ import {
   parseWorkspaceBackupText,
   validateWorkspaceBackup,
   WORKSPACE_BACKUP_APP,
+  WORKSPACE_BACKUP_MAX_BYTES,
   WORKSPACE_BACKUP_SCHEMA_VERSION
 } from "../src/domain/workspaceBackup.js";
 
@@ -125,6 +126,41 @@ test("workspace backup validation rejects unsafe text and invalid shapes", () =>
         }
       }),
     /entries data must be an array/
+  );
+});
+
+test("workspace backup validation rejects oversized imports", () => {
+  assert.throws(
+    () => parseWorkspaceBackupText(" ".repeat(WORKSPACE_BACKUP_MAX_BYTES + 1)),
+    /too large/
+  );
+
+  assert.throws(
+    () =>
+      validateWorkspaceBackup({
+        app: WORKSPACE_BACKUP_APP,
+        schemaVersion: WORKSPACE_BACKUP_SCHEMA_VERSION,
+        data: {
+          projects: [{ id: "long", name: "A".repeat(2001) }]
+        }
+      }),
+    /2000 characters or fewer/
+  );
+});
+
+test("workspace backup validation rejects deeply nested data", () => {
+  assert.throws(
+    () =>
+      validateWorkspaceBackup({
+        app: WORKSPACE_BACKUP_APP,
+        schemaVersion: WORKSPACE_BACKUP_SCHEMA_VERSION,
+        data: {
+          settings: {
+            a: { b: { c: { d: { e: { f: { g: { h: { i: "too deep" } } } } } } } }
+          }
+        }
+      }),
+    /too deeply nested/
   );
 });
 

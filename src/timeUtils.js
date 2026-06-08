@@ -77,7 +77,7 @@ export function groupDurationsByProject(entries) {
 
 export function escapeCsvCell(value) {
   const rawValue = String(value ?? "");
-  const protectedValue = /^[=+\-@]/.test(rawValue) ? `'${rawValue}` : rawValue;
+  const protectedValue = /^[\s\u0000-\u001f]*[=+\-@]/.test(rawValue) ? `'${rawValue}` : rawValue;
   const escapedValue = protectedValue.replaceAll('"', '""');
 
   if (/[",\n\r]/.test(escapedValue)) {

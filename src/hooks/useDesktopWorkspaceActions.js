@@ -1,11 +1,13 @@
 import { useEffect, useRef } from "react";
 import { buildTimesheetCsvImportResult } from "../domain/desktopTimesheetImport.js";
+import { TIMESHEET_CSV_MAX_BYTES } from "../domain/timesheetImport.js";
 import { buildReportCsv, buildReportData } from "../domain/reportCsv.js";
 import {
   createWorkspaceBackup,
   formatWorkspaceMergeSummary,
   mergeWorkspaceBackup,
-  parseWorkspaceBackupText
+  parseWorkspaceBackupText,
+  WORKSPACE_BACKUP_MAX_BYTES
 } from "../domain/workspaceBackup.js";
 import {
   confirmDesktopAction,
@@ -101,7 +103,8 @@ export function useDesktopWorkspaceActions({
     try {
       const selectedFile = await openTextFile({
         title: "Import Workspace Backup",
-        filters: [{ name: "Workspace Backup", extensions: ["json"] }]
+        filters: [{ name: "Workspace Backup", extensions: ["json"] }],
+        maxBytes: WORKSPACE_BACKUP_MAX_BYTES
       });
 
       if (!selectedFile) {
@@ -133,7 +136,8 @@ export function useDesktopWorkspaceActions({
     try {
       const selectedFile = await openTextFile({
         title: "Import Timesheet CSV",
-        filters: [{ name: "CSV", extensions: ["csv"] }]
+        filters: [{ name: "CSV", extensions: ["csv"] }],
+        maxBytes: TIMESHEET_CSV_MAX_BYTES
       });
 
       if (!selectedFile) {

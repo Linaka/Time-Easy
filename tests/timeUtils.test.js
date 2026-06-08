@@ -55,6 +55,8 @@ test("escapes csv cells and mitigates spreadsheet formula injection", () => {
   assert.equal(escapeCsvCell("ACME, Inc."), '"ACME, Inc."');
   assert.equal(escapeCsvCell('He said "hi"'), '"He said ""hi"""');
   assert.equal(escapeCsvCell("=IMPORTXML()"), "'=IMPORTXML()");
+  assert.equal(escapeCsvCell("\t=SUM(1,1)"), '"\'\t=SUM(1,1)"');
+  assert.equal(escapeCsvCell(" =SUM(1,1)"), '"\' =SUM(1,1)"');
 });
 
 test("parses csv rows with quoted commas and records", () => {

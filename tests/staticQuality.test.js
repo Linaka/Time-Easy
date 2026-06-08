@@ -27,6 +27,26 @@ test("static hosting headers define a restrictive browser security policy", () =
   assert.match(headers, /Permissions-Policy:/);
 });
 
+test("desktop shell defines a restrictive Tauri security policy", () => {
+  const tauriConfig = JSON.parse(read("src-tauri/tauri.conf.json"));
+  const capabilities = JSON.parse(read("src-tauri/capabilities/default.json"));
+  const permissions = capabilities.permissions;
+
+  assert.match(tauriConfig.app.security.csp, /default-src 'self'/);
+  assert.match(tauriConfig.app.security.csp, /object-src 'none'/);
+  assert.match(tauriConfig.app.security.csp, /connect-src 'self' ipc: http:\/\/ipc\.localhost/);
+  assert.equal(tauriConfig.app.security.freezePrototype, true);
+  assert.ok(permissions.includes("fs:allow-stat"));
+  assert.ok(permissions.includes("fs:allow-read-text-file"));
+  assert.ok(permissions.includes("fs:allow-write-text-file"));
+
+  const fsScope = permissions.find((permission) => permission.identifier === "fs:scope");
+  assert.ok(fsScope);
+  assert.deepEqual(fsScope.allow, ["$DESKTOP/**/*", "$DOCUMENT/**/*", "$DOWNLOAD/**/*"]);
+  assert.ok(fsScope.deny.includes("$APPDATA/**/*"));
+  assert.ok(fsScope.deny.includes("$CONFIG/**/*"));
+});
+
 test("accessibility affordances are present in the app shell", () => {
   const appLayout = read("src/components/templates/AppLayout.jsx");
   const sidebar = read("src/components/organisms/Sidebar.jsx");

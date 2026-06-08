@@ -7,7 +7,29 @@
     "core:default",
     "core:menu:default",
     "dialog:default",
+    "fs:allow-stat",
     "fs:allow-read-text-file",
-    "fs:allow-write-text-file"
+    "fs:allow-write-text-file",
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        "$DESKTOP/**/*",
+        "$DOCUMENT/**/*",
+        "$DOWNLOAD/**/*"
+      ],
+      "deny": [
+        "$APPCACHE/**/*",
+        "$APPCONFIG/**/*",
+        "$APPDATA/**/*",
+        "$APPLOCALDATA/**/*",
+        "$APPLOG/**/*",
+        "$CACHE/**/*",
+        "$CONFIG/**/*",
+        "$EXE/**/*",
+        "$LOCALDATA/**/*",
+        "$RESOURCE/**/*",
+        "$RUNTIME/**/*"
+      ]
+    }
   ]
 }
