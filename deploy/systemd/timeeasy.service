@@ -1,0 +1,19 @@
+[Unit]
+Description=Creative Operations / TimeEasy workspace API
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/timeeasy
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=4173
+Environment=TIMETRACKR_WORKSPACE_DB=/var/lib/timeeasy/workspace.sqlite
+ExecStart=/usr/bin/npm run serve
+Restart=always
+RestartSec=5
+User=timeeasy
+Group=timeeasy
+
+[Install]
+WantedBy=multi-user.target

@@ -6,7 +6,7 @@ import {
 import { createSharedWorkspaceSyncSession } from "../services/sharedWorkspaceSync.js";
 
 const SYNC_DEBOUNCE_MS = 350;
-const POLL_INTERVAL_MS = 2500;
+const POLL_INTERVAL_MS = 1000;
 
 export function useSharedWorkspacePersistence({ onWorkspaceChange, workspace }) {
   const normalizedWorkspace = useMemo(

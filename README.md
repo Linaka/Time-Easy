@@ -25,7 +25,34 @@ npm install
 npm run dev
 ```
 
-When the app is served by the Vite dev or preview server, browsers on that same server share workspace changes through `/api/workspace`. The shared server copy is stored in `.workspace-data/workspace.json` on the machine running the server. For LAN testing, run `npm run dev -- --host 0.0.0.0` and have everyone use that same server URL. If the endpoint is unavailable, the app falls back to browser localStorage.
+When the app is served by the Vite dev or preview server, browsers on that same server share workspace changes through `/api/workspace`. The shared server copy is stored in `.workspace-data/workspace.sqlite` on the machine running the server. For LAN testing, run `npm run dev -- --host 0.0.0.0` and have everyone use that same server URL. If the endpoint is unavailable, the app falls back to browser localStorage.
+
+## Team Webserver
+
+For a team webserver, the frontend and shared workspace API must come from the same origin. The bundled Node server owns `/api/workspace` and writes shared changes to SQLite:
+
+```bash
+npm run build
+HOST=0.0.0.0 PORT=4173 npm run serve
+```
+
+All team members should open the same server URL, for example `http://your-server:4173`. Changes are saved through `/api/workspace` into the server-side SQLite database at `.workspace-data/workspace.sqlite`, so updates made by one browser are picked up by the rest of the team. Set `TIMETRACKR_WORKSPACE_DB=/absolute/path/workspace.sqlite` to choose a persistent database location for production backups. The bundled webserver uses Node's built-in SQLite support.
+
+### Nginx
+
+Nginx can be the public webserver, but it should not serve only static files. If `/api/workspace` is missing, browsers fall back to localStorage and team changes will not be shared.
+
+Recommended nginx setup:
+
+- Run the Node server on localhost, for example `HOST=127.0.0.1 PORT=4173 TIMETRACKR_WORKSPACE_DB=/var/lib/timeeasy/workspace.sqlite npm run serve`.
+- Let nginx serve the built `dist` files.
+- Proxy `/api/` from nginx to `http://127.0.0.1:4173`.
+- Keep the Node process alive with systemd, PM2, or another process manager.
+
+Example deployment files:
+
+- [deploy/nginx/timeeasy.conf](deploy/nginx/timeeasy.conf)
+- [deploy/systemd/timeeasy.service](deploy/systemd/timeeasy.service)
 
 ## Desktop App
 
@@ -100,7 +127,7 @@ Core boundaries:
 - Client error logs redact sensitive context fields before writing diagnostics or optional same-origin telemetry.
 - Static security headers define CSP, frame blocking, content sniffing protection, referrer policy, and browser permissions policy.
 - Role-based access rules gate navigation and utility settings in the browser; server-side enforcement remains a backend requirement.
-- App state uses same-origin shared workspace storage when served by the Vite server, with browser localStorage as the static/desktop fallback. No secrets, tokens, analytics scripts, or external API calls are used by default.
+- App state uses same-origin shared workspace storage when served by the Vite dev/preview server or bundled Node webserver, with browser localStorage as the static/desktop fallback. No secrets, tokens, analytics scripts, or external API calls are used by default.
 - Set `VITE_TELEMETRY_ENDPOINT` to a same-origin endpoint such as `/telemetry` to receive redacted client diagnostics in production.
 - No third-party assets or proprietary branding are embedded.
 

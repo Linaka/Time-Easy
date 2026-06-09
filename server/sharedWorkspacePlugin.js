@@ -1,20 +1,10 @@
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
 import {
   mergeWorkspaceSnapshots,
   normalizeWorkspaceSnapshot
 } from "../src/domain/workspaceSnapshot.js";
+import { createSharedWorkspaceStore } from "./sharedWorkspaceStore.js";
 
-const DATA_FILE = join(process.cwd(), ".workspace-data", "workspace.json");
 const MAX_BODY_BYTES = 2_000_000;
-
-function createInitialStore() {
-  return {
-    revision: 0,
-    updatedAt: null,
-    workspace: null
-  };
-}
 
 function isApiRequest(url) {
   return url.pathname === "/api/workspace";
@@ -42,30 +32,6 @@ async function readRequestJson(request) {
   return text ? JSON.parse(text) : {};
 }
 
-async function readStore() {
-  try {
-    const text = await readFile(DATA_FILE, "utf8");
-    const store = JSON.parse(text);
-    return {
-      revision: Number(store.revision) || 0,
-      updatedAt: store.updatedAt || null,
-      workspace: store.workspace ? normalizeWorkspaceSnapshot(store.workspace) : null
-    };
-  } catch (error) {
-    if (error.code === "ENOENT") {
-      return createInitialStore();
-    }
-    throw error;
-  }
-}
-
-async function writeStore(store) {
-  await mkdir(dirname(DATA_FILE), { recursive: true });
-  const temporaryFile = `${DATA_FILE}.${Date.now()}.tmp`;
-  await writeFile(temporaryFile, JSON.stringify(store, null, 2), "utf8");
-  await rename(temporaryFile, DATA_FILE);
-}
-
 function workspaceResponse(store, extra = {}) {
   return {
     found: Boolean(store.workspace),
@@ -76,7 +42,9 @@ function workspaceResponse(store, extra = {}) {
   };
 }
 
-export function createSharedWorkspacePlugin() {
+export function createSharedWorkspaceRequestHandler({
+  store = createSharedWorkspaceStore()
+} = {}) {
   let writeQueue = Promise.resolve();
 
   function queueWrite(operation) {
@@ -92,7 +60,7 @@ export function createSharedWorkspacePlugin() {
     }
 
     if (request.method === "GET") {
-      sendJson(response, 200, workspaceResponse(await readStore()));
+      sendJson(response, 200, workspaceResponse(await store.readStore()));
       return true;
     }
 
@@ -112,20 +80,20 @@ export function createSharedWorkspacePlugin() {
       const baseWorkspace = normalizeWorkspaceSnapshot(payload.baseWorkspace);
 
       const nextStore = await queueWrite(async () => {
-        const currentStore = await readStore();
+        const currentStore = await store.readStore();
         const shouldMerge =
           Boolean(currentStore.workspace) && currentStore.revision !== baseRevision;
         const workspace = shouldMerge
           ? mergeWorkspaceSnapshots(baseWorkspace, currentStore.workspace, incomingWorkspace)
           : incomingWorkspace;
-        const store = {
+        const nextStorePayload = {
           revision: currentStore.revision + 1,
           updatedAt: new Date().toISOString(),
           workspace
         };
 
-        await writeStore(store);
-        return { store, merged: shouldMerge };
+        await store.writeStore(nextStorePayload);
+        return { store: nextStorePayload, merged: shouldMerge };
       });
 
       sendJson(response, 200, workspaceResponse(nextStore.store, { merged: nextStore.merged }));
@@ -135,6 +103,12 @@ export function createSharedWorkspacePlugin() {
 
     return true;
   }
+
+  return handleRequest;
+}
+
+export function createSharedWorkspacePlugin(options = {}) {
+  const handleRequest = createSharedWorkspaceRequestHandler(options);
 
   function attachServer(server) {
     server.middlewares.use(async (request, response, next) => {
