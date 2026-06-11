@@ -2,10 +2,10 @@ import { addDays, addMinutes, dateFromKey, getLocalDateKey } from "./dateUtils.j
 
 export function createInitialProjects() {
   return [
-    { id: "acme", name: "ACME", client: "Creative Studio", colorKey: "blue", status: "Active", budgetHours: 36, hourlyRate: 120, tags: ["Retainer", "Design"] },
-    { id: "project-x", name: "Project X", client: "Core Product", colorKey: "purple", status: "Active", budgetHours: 48, hourlyRate: 110, tags: ["Product", "Engineering"] },
-    { id: "office", name: "Office", client: "Internal", colorKey: "orange", status: "Active", budgetHours: 24, hourlyRate: 0, tags: ["Internal", "Admin"] },
-    { id: "break", name: "Break", client: "Personal", colorKey: "slate", status: "Active", budgetHours: 8, hourlyRate: 0, tags: ["Non-billable"] }
+    { id: "acme", name: "ACME", client: "Creative Studio", internalTeam: "Design", externalClient: "ACME Marketing", colorKey: "blue", status: "Active", budgetHours: 36, hourlyRate: 120, tags: ["Retainer", "Design"] },
+    { id: "project-x", name: "Project X", client: "Core Product", internalTeam: "Engineering", externalClient: "Core Product", colorKey: "purple", status: "Active", budgetHours: 48, hourlyRate: 110, tags: ["Product", "Engineering"] },
+    { id: "office", name: "Office", client: "Internal", internalTeam: "Operations", externalClient: "", colorKey: "orange", status: "Active", budgetHours: 24, hourlyRate: 0, tags: ["Internal", "Admin"] },
+    { id: "break", name: "Break", client: "Personal", internalTeam: "People", externalClient: "", colorKey: "slate", status: "Active", budgetHours: 8, hourlyRate: 0, tags: ["Non-billable"] }
   ];
 }
 

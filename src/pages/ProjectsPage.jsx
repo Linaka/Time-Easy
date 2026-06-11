@@ -3,6 +3,7 @@ import {
   Check,
   Pencil,
   Plus,
+  Search,
   X
 } from "lucide-react";
 import {
@@ -31,6 +32,8 @@ import styles from "./ProjectsPage.module.css";
 const initialProjectForm = {
   name: "",
   client: "",
+  internalTeam: "",
+  externalClient: "",
   colorKey: "blue",
   budgetHours: "80",
   hourlyRate: "95",
@@ -41,11 +44,32 @@ function projectToForm(project) {
   return {
     name: project.name || "",
     client: project.client || "",
+    internalTeam: project.internalTeam || "",
+    externalClient: project.externalClient || "",
     colorKey: project.colorKey || "blue",
     budgetHours: String(project.budgetHours ?? ""),
     hourlyRate: String(project.hourlyRate ?? ""),
     tagText: project.tags?.join(", ") || ""
   };
+}
+
+function projectMatchesSearch(project, searchTerm) {
+  if (!searchTerm) {
+    return true;
+  }
+
+  return [
+    project.name,
+    project.client,
+    project.internalTeam,
+    project.externalClient,
+    project.status,
+    ...(project.tags || [])
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase()
+    .includes(searchTerm);
 }
 
 export function ProjectsPage({
@@ -61,6 +85,7 @@ export function ProjectsPage({
   const [editingProjectId, setEditingProjectId] = useState(null);
   const [clientFilter, setClientFilter] = useState("All");
   const [tagFilter, setTagFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [tagDrafts, setTagDrafts] = useState(() =>
     Object.fromEntries(projects.map((project) => [project.id, project.tags?.join(", ") || ""]))
   );
@@ -68,12 +93,14 @@ export function ProjectsPage({
   const modalReturnFocusRef = useRef(null);
   const projectNameRef = useRef(null);
   const isEditingProject = Boolean(editingProjectId);
+  const searchTerm = searchQuery.trim().toLowerCase();
   const clientOptions = ["All", ...Array.from(new Set(projects.map((project) => project.client)))];
   const tagOptions = ["All", ...Array.from(new Set(projects.flatMap((project) => project.tags || [])))];
   const visibleProjects = projects.filter((project) => {
     const matchesClient = clientFilter === "All" || project.client === clientFilter;
     const matchesTag = tagFilter === "All" || project.tags?.includes(tagFilter);
-    return matchesClient && matchesTag;
+    const matchesSearch = projectMatchesSearch(project, searchTerm);
+    return matchesClient && matchesTag && matchesSearch;
   });
 
   useEffect(() => {
@@ -148,13 +175,24 @@ export function ProjectsPage({
               >
                 <Plus className={styles["projects-page__style-003"]} aria-hidden="true" />
               </button>
+              <label className={styles["projects-page__style-040"]}>
+                <Search className={styles["projects-page__style-041"]} aria-hidden="true" />
+                <span className={styles["projects-page__style-042"]}>Search projects</span>
+                <input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  className={styles["projects-page__style-043"]}
+                  placeholder="Search projects"
+                />
+              </label>
               <FilterSelect label="Client" value={clientFilter} onChange={setClientFilter} options={clientOptions} />
               <FilterSelect label="Project tag" value={tagFilter} onChange={setTagFilter} options={tagOptions} />
             </div>
           }
         >
           <div className={styles["projects-page__style-004"]}>
-            {visibleProjects.map((project) => {
+            {visibleProjects.length ? visibleProjects.map((project) => {
               const trackedSeconds = sumDurations(entries.filter((entry) => entry.projectId === project.id));
               const budgetSeconds = Number(project.budgetHours || 0) * 3600;
               return (
@@ -163,6 +201,22 @@ export function ProjectsPage({
                     <div>
                       <ProjectBadge project={project} />
                       <p className={styles["projects-page__style-007"]}>{project.client} · {currency(project.hourlyRate)}/hr</p>
+                      {(project.internalTeam || project.externalClient) ? (
+                        <dl className={styles["projects-page__style-034"]}>
+                          {project.internalTeam ? (
+                            <div className={styles["projects-page__style-035"]}>
+                              <dt className={styles["projects-page__style-036"]}>Team</dt>
+                              <dd className={styles["projects-page__style-037"]}>{project.internalTeam}</dd>
+                            </div>
+                          ) : null}
+                          {project.externalClient ? (
+                            <div className={styles["projects-page__style-035"]}>
+                              <dt className={styles["projects-page__style-036"]}>External</dt>
+                              <dd className={styles["projects-page__style-037"]}>{project.externalClient}</dd>
+                            </div>
+                          ) : null}
+                        </dl>
+                      ) : null}
                       <div className={styles["projects-page__style-008"]}>
                         <TagList tags={project.tags || []} />
                       </div>
@@ -225,7 +279,9 @@ export function ProjectsPage({
                   </form>
                 </article>
               );
-            })}
+            }) : (
+              <p className={styles["projects-page__style-044"]}>No projects match the current search.</p>
+            )}
           </div>
         </Panel>
       </div>
@@ -287,6 +343,24 @@ export function ProjectsPage({
                   className={styles["projects-page__style-027"]}
                 />
               </FormField>
+              <div className={styles["projects-page__style-028"]}>
+                <FormField label="Internal Team" htmlFor="project-internal-team">
+                  <input
+                    id="project-internal-team"
+                    value={form.internalTeam}
+                    onChange={(event) => setFormValue(setForm, "internalTeam", event.target.value)}
+                    className={styles["projects-page__style-038"]}
+                  />
+                </FormField>
+                <FormField label="External Client" htmlFor="project-external-client">
+                  <input
+                    id="project-external-client"
+                    value={form.externalClient}
+                    onChange={(event) => setFormValue(setForm, "externalClient", event.target.value)}
+                    className={styles["projects-page__style-039"]}
+                  />
+                </FormField>
+              </div>
               <FormField label="Colour" htmlFor="project-color">
                 <Select id="project-color" value={form.colorKey} onChange={(value) => setFormValue(setForm, "colorKey", value)}>
                   {Object.entries(PROJECT_COLORS).map(([key, color]) => <option key={key} value={key}>{color.label}</option>)}

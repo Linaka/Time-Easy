@@ -168,3 +168,10 @@ test("source does not bypass React text escaping", () => {
 
   assert.equal(sourceText.includes("dangerouslySetInnerHTML"), false);
 });
+
+test("date input native validation matches picker date keys", () => {
+  const formControls = read("src/components/atoms/FormControls.jsx");
+
+  assert.match(formControls, /pattern="\[0-9\]\{4\}-\[0-9\]\{2\}-\[0-9\]\{2\}"/);
+  assert.equal(formControls.includes('pattern="\\\\d{4}-\\\\d{2}-\\\\d{2}"'), false);
+});

@@ -30,6 +30,8 @@ export function createFreshWorkspace(timestamp = new Date()) {
         id: "starter",
         name: "Starter Project",
         client: "Internal",
+        internalTeam: "Workspace Team",
+        externalClient: "",
         colorKey: "green",
         status: "Active",
         budgetHours: 0,
