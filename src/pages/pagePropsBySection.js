@@ -55,6 +55,7 @@ export function buildPagePropsBySection({
     "Time Tracker": {
       entries,
       projects,
+      teamMembers,
       activeProjects,
       description: timeTracking.description,
       descriptionRef: timeTracking.descriptionRef,

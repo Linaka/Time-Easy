@@ -226,7 +226,7 @@
 }
 
 .time-tracker-page__style-052 {
-  @apply w-full min-w-[960px] table-fixed;
+  @apply w-full min-w-[1060px] table-fixed;
 }
 
 .time-tracker-page__style-053 {
@@ -234,11 +234,11 @@
 }
 
 .time-tracker-page__style-054 {
-  @apply w-[23%];
+  @apply w-[22%];
 }
 
 .time-tracker-page__style-055 {
-  @apply w-[25%];
+  @apply w-[12%];
 }
 
 .time-tracker-page__style-056 {
@@ -246,15 +246,15 @@
 }
 
 .time-tracker-page__style-057 {
-  @apply w-[9%];
+  @apply w-[18%];
 }
 
 .time-tracker-page__style-058 {
-  @apply w-[10%];
+  @apply w-[9%];
 }
 
 .time-tracker-page__style-059 {
-  @apply w-[11%];
+  @apply w-[8%];
 }
 
 .time-tracker-page__style-060 {
@@ -310,7 +310,7 @@
 }
 
 .time-tracker-page__style-073 {
-  @apply w-[23%] px-4 py-2.5 align-middle sm:px-5;
+  @apply w-[22%] px-4 py-2.5 align-middle sm:px-5;
 }
 
 .time-tracker-page__style-074 {
@@ -326,7 +326,7 @@
 }
 
 .time-tracker-page__style-077 {
-  @apply w-[25%] px-3 py-2.5 align-middle;
+  @apply w-[22%] px-3 py-2.5 align-middle;
 }
 
 .time-tracker-page__style-078 {
@@ -338,7 +338,7 @@
 }
 
 .time-tracker-page__style-080 {
-  @apply w-[22%] px-3 py-2.5 align-middle;
+  @apply w-[18%] px-3 py-2.5 align-middle;
 }
 
 .time-tracker-page__style-081 {
@@ -366,11 +366,11 @@
 }
 
 .time-tracker-page__style-087 {
-  @apply w-[10%] px-3 py-2.5 align-middle;
+  @apply w-[8%] px-3 py-2.5 align-middle;
 }
 
 .time-tracker-page__style-088 {
-  @apply w-[11%] px-3 py-2.5 align-middle;
+  @apply w-[9%] px-3 py-2.5 align-middle;
 }
 
 .time-tracker-page__style-089 {
@@ -472,4 +472,24 @@
 
 .time-tracker-page__entry-menu--regular {
   @apply top-12;
+}
+
+.time-tracker-page__style-098 {
+  @apply w-[9%];
+}
+
+.time-tracker-page__style-099 {
+  @apply flex items-center gap-2 text-sm font-medium text-slate-700;
+}
+
+.time-tracker-page__style-100 {
+  @apply h-4 w-4 shrink-0 text-slate-500;
+}
+
+.time-tracker-page__style-101 {
+  @apply w-[12%] px-3 py-2.5 align-middle;
+}
+
+.time-tracker-page__style-102 {
+  @apply text-sm font-semibold text-slate-900;
 }

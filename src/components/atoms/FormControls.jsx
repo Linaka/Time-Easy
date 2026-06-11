@@ -133,6 +133,8 @@ export function DateInput({
   min,
   max,
   disabled,
+  placeholder = "YYYY-MM-DD",
+  title = "Use YYYY-MM-DD format.",
   ...inputProps
 }) {
   const generatedId = useId();
@@ -289,7 +291,9 @@ export function DateInput({
         id={controlId}
         type="text"
         inputMode="numeric"
-        pattern="\\d{4}-\\d{2}-\\d{2}"
+        pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+        placeholder={placeholder}
+        title={title}
         value={value || ""}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}

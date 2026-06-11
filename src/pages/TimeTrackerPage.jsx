@@ -8,6 +8,7 @@ import {
   PoundSterling,
   Tags,
   TimerReset,
+  UserRound,
   X
 } from "lucide-react";
 import {
@@ -31,12 +32,16 @@ import {
 } from "../domain/dateUtils.js";
 import { formatDurationLabel } from "../domain/formatters.js";
 import { slugify } from "../domain/formUtils.js";
-import { getProject } from "../domain/projectUtils.js";
+import {
+  getProject,
+  memberName
+} from "../domain/projectUtils.js";
 import styles from "./TimeTrackerPage.module.css";
 
 export function TimeTrackerPage({
   entries,
   projects,
+  teamMembers = [],
   activeProjects,
   description,
   descriptionRef,
@@ -110,6 +115,7 @@ export function TimeTrackerPage({
         <TimeEntriesTable
           entriesByDay={entriesByDay}
           projects={projects}
+          teamMembers={teamMembers}
           onRestart={onRestartEntry}
           onUpdateEntry={onUpdateEntry}
           onEntryApprovalChange={onEntryApprovalChange}
@@ -402,7 +408,7 @@ function TimeEntryBar({
   );
 }
 
-function TimeEntriesTable({ entriesByDay, projects, onRestart, onUpdateEntry, onEntryApprovalChange }) {
+function TimeEntriesTable({ entriesByDay, projects, teamMembers, onRestart, onUpdateEntry, onEntryApprovalChange }) {
   const dayOrder = Object.keys(entriesByDay).sort(sortDayLabels);
 
   return (
@@ -431,6 +437,7 @@ function TimeEntriesTable({ entriesByDay, projects, onRestart, onUpdateEntry, on
                   key={entry.id}
                   entry={entry}
                   projects={projects}
+                  teamMembers={teamMembers}
                   onRestart={onRestart}
                   onUpdateEntry={onUpdateEntry}
                   onEntryApprovalChange={onEntryApprovalChange}
@@ -450,10 +457,12 @@ function TimeEntriesTable({ entriesByDay, projects, onRestart, onUpdateEntry, on
                   <col className={styles["time-tracker-page__style-057"]} />
                   <col className={styles["time-tracker-page__style-058"]} />
                   <col className={styles["time-tracker-page__style-059"]} />
+                  <col className={styles["time-tracker-page__style-098"]} />
                 </colgroup>
                 <thead className={styles["time-tracker-page__style-060"]}>
                   <tr>
                     <th scope="col">Task</th>
+                    <th scope="col">Booked by</th>
                     <th scope="col">Project and labels</th>
                     <th scope="col">Time range</th>
                     <th scope="col">Duration</th>
@@ -467,6 +476,7 @@ function TimeEntriesTable({ entriesByDay, projects, onRestart, onUpdateEntry, on
                       key={entry.id}
                       entry={entry}
                       projects={projects}
+                      teamMembers={teamMembers}
                       onRestart={onRestart}
                       onUpdateEntry={onUpdateEntry}
                       onEntryApprovalChange={onEntryApprovalChange}
@@ -482,8 +492,9 @@ function TimeEntriesTable({ entriesByDay, projects, onRestart, onUpdateEntry, on
   );
 }
 
-function EntryMobileCard({ entry, projects, onRestart, onUpdateEntry, onEntryApprovalChange }) {
+function EntryMobileCard({ entry, projects, teamMembers, onRestart, onUpdateEntry, onEntryApprovalChange }) {
   const project = getProject(projects, entry.projectId);
+  const bookedBy = memberName(entry.memberId, teamMembers);
 
   return (
     <article className={styles["time-tracker-page__style-062"]} aria-label={`${entry.description} time entry`}>
@@ -502,6 +513,10 @@ function EntryMobileCard({ entry, projects, onRestart, onUpdateEntry, onEntryApp
           <CalendarDays className={styles["time-tracker-page__style-070"]} aria-hidden="true" />
           <span>{entry.timeRange}</span>
         </div>
+        <div className={styles["time-tracker-page__style-099"]}>
+          <UserRound className={styles["time-tracker-page__style-100"]} aria-hidden="true" />
+          <span>Booked by {bookedBy}</span>
+        </div>
         <div className={styles["time-tracker-page__style-071"]}>
           <BillableBadge billable={entry.billable} />
           <StatusBadge status={entry.approvalStatus || "Approved"} />
@@ -518,8 +533,9 @@ function EntryMobileCard({ entry, projects, onRestart, onUpdateEntry, onEntryApp
   );
 }
 
-function EntryRow({ entry, projects, onRestart, onUpdateEntry, onEntryApprovalChange }) {
+function EntryRow({ entry, projects, teamMembers, onRestart, onUpdateEntry, onEntryApprovalChange }) {
   const project = getProject(projects, entry.projectId);
+  const bookedBy = memberName(entry.memberId, teamMembers);
 
   return (
     <tr className={styles["time-tracker-page__style-072"]}>
@@ -528,6 +544,9 @@ function EntryRow({ entry, projects, onRestart, onUpdateEntry, onEntryApprovalCh
           <p className={styles["time-tracker-page__style-075"]}>{entry.description}</p>
           <p className={styles["time-tracker-page__style-076"]}>{entry.source || "Task"}</p>
         </div>
+      </td>
+      <td className={styles["time-tracker-page__style-101"]}>
+        <span className={styles["time-tracker-page__style-102"]}>{bookedBy}</span>
       </td>
       <td className={styles["time-tracker-page__style-077"]}>
         <div className={styles["time-tracker-page__style-078"]}>

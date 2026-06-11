@@ -11,6 +11,8 @@ export function createProjectCommands({
     const validationError = validatePlainFields([
       projectDraft.name,
       projectDraft.client,
+      projectDraft.internalTeam,
+      projectDraft.externalClient,
       projectDraft.tagText
     ]);
     if (validationError) {
@@ -37,6 +39,8 @@ export function createProjectCommands({
     const validationError = validatePlainFields([
       projectDraft.name,
       projectDraft.client,
+      projectDraft.internalTeam,
+      projectDraft.externalClient,
       projectDraft.tagText
     ]);
     if (validationError) {
