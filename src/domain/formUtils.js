@@ -1,5 +1,7 @@
 import { isSafeDisplayText } from "../timeUtils.js";
 
+export const MAX_TAGS = 4;
+
 export function setFormValue(setter, key, value) {
   setter((current) => ({ ...current, [key]: value }));
 }
@@ -9,7 +11,7 @@ export function parseTags(value) {
     .split(",")
     .map((tag) => tag.trim())
     .filter(Boolean)
-    .slice(0, 4);
+    .slice(0, MAX_TAGS);
 }
 
 export function validatePlainFields(values) {

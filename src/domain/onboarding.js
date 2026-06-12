@@ -13,7 +13,7 @@ export const GUIDANCE_STEPS = [
     section: OVERVIEW_SECTION,
     targetId: "overview-metrics",
     title: "Overview",
-    body: "Start here for weekly totals, billable time, approvals, and logged costs."
+    body: "Start here for weekly totals, billable time, billable income, and approvals."
   },
   {
     section: "Time Tracker",

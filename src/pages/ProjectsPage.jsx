@@ -4,12 +4,12 @@ import {
   Pencil,
   Plus,
   Search,
+  Tags,
   X
 } from "lucide-react";
 import {
-  FilterSelect,
   FormField,
-  GhostButton,
+  IconTooltipButton,
   Panel,
   PrimaryButton,
   ProjectBadge,
@@ -25,7 +25,7 @@ import {
   formatDurationLabel,
   percent
 } from "../domain/formatters.js";
-import { setFormValue } from "../domain/formUtils.js";
+import { MAX_TAGS, setFormValue } from "../domain/formUtils.js";
 import { projectStyle } from "../domain/projectUtils.js";
 import styles from "./ProjectsPage.module.css";
 
@@ -72,6 +72,50 @@ function projectMatchesSearch(project, searchTerm) {
     .includes(searchTerm);
 }
 
+function normalizeDisplayValue(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function isRepeatedDisplayValue(value, displayedValues) {
+  const normalizedValue = normalizeDisplayValue(value);
+  return !normalizedValue || displayedValues.some((displayedValue) => normalizeDisplayValue(displayedValue) === normalizedValue);
+}
+
+function getProjectCardDisplay(project) {
+  const displayedValues = [project.name, project.client];
+  const visibleTags = [];
+
+  for (const tag of project.tags || []) {
+    if (isRepeatedDisplayValue(tag, displayedValues)) {
+      continue;
+    }
+
+    visibleTags.push(tag);
+    displayedValues.push(tag);
+  }
+
+  const metaItems = [
+    { label: "Rate", value: `${currency(project.hourlyRate)}/hr` }
+  ];
+
+  if (!isRepeatedDisplayValue(project.internalTeam, displayedValues)) {
+    metaItems.push({ label: "Team", value: project.internalTeam });
+    displayedValues.push(project.internalTeam);
+  }
+
+  if (!isRepeatedDisplayValue(project.externalClient, displayedValues)) {
+    metaItems.push({ label: "External", value: project.externalClient });
+    displayedValues.push(project.externalClient);
+  }
+
+  metaItems.push({ label: "Status", value: project.status || "Draft", variant: "status" });
+
+  return {
+    metaItems,
+    visibleTags
+  };
+}
+
 export function ProjectsPage({
   projects,
   entries,
@@ -83,29 +127,18 @@ export function ProjectsPage({
   const [form, setForm] = useState(initialProjectForm);
   const [projectModalOpen, setProjectModalOpen] = useState(false);
   const [editingProjectId, setEditingProjectId] = useState(null);
-  const [clientFilter, setClientFilter] = useState("All");
-  const [tagFilter, setTagFilter] = useState("All");
+  const [tagModalProjectId, setTagModalProjectId] = useState(null);
+  const [tagModalDraft, setTagModalDraft] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [tagDrafts, setTagDrafts] = useState(() =>
-    Object.fromEntries(projects.map((project) => [project.id, project.tags?.join(", ") || ""]))
-  );
   const createProjectButtonRef = useRef(null);
   const modalReturnFocusRef = useRef(null);
+  const tagModalReturnFocusRef = useRef(null);
   const projectNameRef = useRef(null);
+  const tagInputRef = useRef(null);
   const isEditingProject = Boolean(editingProjectId);
+  const tagModalProject = projects.find((project) => project.id === tagModalProjectId);
   const searchTerm = searchQuery.trim().toLowerCase();
-  const clientOptions = ["All", ...Array.from(new Set(projects.map((project) => project.client)))];
-  const tagOptions = ["All", ...Array.from(new Set(projects.flatMap((project) => project.tags || [])))];
-  const visibleProjects = projects.filter((project) => {
-    const matchesClient = clientFilter === "All" || project.client === clientFilter;
-    const matchesTag = tagFilter === "All" || project.tags?.includes(tagFilter);
-    const matchesSearch = projectMatchesSearch(project, searchTerm);
-    return matchesClient && matchesTag && matchesSearch;
-  });
-
-  useEffect(() => {
-    setTagDrafts(Object.fromEntries(projects.map((project) => [project.id, project.tags?.join(", ") || ""])));
-  }, [projects]);
+  const visibleProjects = projects.filter((project) => projectMatchesSearch(project, searchTerm));
 
   useEffect(() => {
     if (!projectModalOpen) {
@@ -124,6 +157,24 @@ export function ProjectsPage({
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [projectModalOpen]);
+
+  useEffect(() => {
+    if (!tagModalProjectId) {
+      return undefined;
+    }
+
+    window.requestAnimationFrame(() => tagInputRef.current?.focus({ preventScroll: true }));
+
+    function handleKeyDown(event) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeProjectTagsModal();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [tagModalProjectId]);
 
   function openCreateProjectModal() {
     modalReturnFocusRef.current = createProjectButtonRef.current;
@@ -147,6 +198,19 @@ export function ProjectsPage({
     window.requestAnimationFrame(() => returnFocusTarget?.focus({ preventScroll: true }));
   }
 
+  function openProjectTagsModal(project, event) {
+    tagModalReturnFocusRef.current = event.currentTarget;
+    setTagModalProjectId(project.id);
+    setTagModalDraft(project.tags?.join(", ") || "");
+  }
+
+  function closeProjectTagsModal() {
+    const returnFocusTarget = tagModalReturnFocusRef.current;
+    setTagModalProjectId(null);
+    setTagModalDraft("");
+    window.requestAnimationFrame(() => returnFocusTarget?.focus({ preventScroll: true }));
+  }
+
   function handleProjectSubmit(event) {
     event.preventDefault();
     const saved = isEditingProject
@@ -155,6 +219,16 @@ export function ProjectsPage({
     if (saved) {
       closeProjectModal();
     }
+  }
+
+  function handleProjectTagsSubmit(event) {
+    event.preventDefault();
+    if (!tagModalProjectId) {
+      return;
+    }
+
+    onProjectTagsChange(tagModalProjectId, tagModalDraft);
+    closeProjectTagsModal();
   }
 
   return (
@@ -186,8 +260,6 @@ export function ProjectsPage({
                   placeholder="Search projects"
                 />
               </label>
-              <FilterSelect label="Client" value={clientFilter} onChange={setClientFilter} options={clientOptions} />
-              <FilterSelect label="Project tag" value={tagFilter} onChange={setTagFilter} options={tagOptions} />
             </div>
           }
         >
@@ -195,48 +267,58 @@ export function ProjectsPage({
             {visibleProjects.length ? visibleProjects.map((project) => {
               const trackedSeconds = sumDurations(entries.filter((entry) => entry.projectId === project.id));
               const budgetSeconds = Number(project.budgetHours || 0) * 3600;
+              const { metaItems, visibleTags } = getProjectCardDisplay(project);
               return (
                 <article key={project.id} className={styles["projects-page__style-005"]}>
                   <div className={styles["projects-page__style-006"]}>
-                    <div>
-                      <ProjectBadge project={project} />
-                      <p className={styles["projects-page__style-007"]}>{project.client} · {currency(project.hourlyRate)}/hr</p>
-                      {(project.internalTeam || project.externalClient) ? (
-                        <dl className={styles["projects-page__style-034"]}>
-                          {project.internalTeam ? (
-                            <div className={styles["projects-page__style-035"]}>
-                              <dt className={styles["projects-page__style-036"]}>Team</dt>
-                              <dd className={styles["projects-page__style-037"]}>{project.internalTeam}</dd>
-                            </div>
-                          ) : null}
-                          {project.externalClient ? (
-                            <div className={styles["projects-page__style-035"]}>
-                              <dt className={styles["projects-page__style-036"]}>External</dt>
-                              <dd className={styles["projects-page__style-037"]}>{project.externalClient}</dd>
-                            </div>
-                          ) : null}
-                        </dl>
-                      ) : null}
-                      <div className={styles["projects-page__style-008"]}>
-                        <TagList tags={project.tags || []} />
-                      </div>
-                    </div>
+                    <ProjectBadge project={project} />
                     <div className={styles["projects-page__style-009"]}>
-                      <StatusBadge status={project.status} />
-                      <GhostButton
+                      <IconTooltipButton
                         onClick={(event) => openEditProjectModal(project, event)}
                         icon={Pencil}
-                      >
-                        Edit
-                      </GhostButton>
-                      <GhostButton
+                        label={`Edit ${project.name}`}
+                        title="Edit project."
+                        description="Change project details, budget, client, team, and custom tags."
+                        className={styles["projects-page__style-051"]}
+                      />
+                      <IconTooltipButton
                         onClick={() => onProjectStatusChange(project.id, project.status === "Archived" ? "Active" : "Archived")}
                         icon={project.status === "Archived" ? Check : X}
-                      >
-                        {project.status === "Archived" ? "Reactivate" : "Archive"}
-                      </GhostButton>
+                        label={project.status === "Archived" ? `Reactivate ${project.name}` : `Archive ${project.name}`}
+                        title={project.status === "Archived" ? "Reactivate project." : "Archive project."}
+                        description={project.status === "Archived" ? "Return this project to active project lists." : "Move this project out of active project lists."}
+                        className={styles["projects-page__style-051"]}
+                      />
                     </div>
                   </div>
+                  <dl className={styles["projects-page__style-034"]}>
+                    {metaItems.map((item) => (
+                      <div key={`${item.label}-${item.value}`} className={styles["projects-page__style-035"]}>
+                        <dt className={styles["projects-page__style-036"]}>{item.label}</dt>
+                        <dd className={styles["projects-page__style-037"]}>
+                          {item.variant === "status" ? <StatusBadge status={item.value} compact /> : item.value}
+                        </dd>
+                      </div>
+                    ))}
+                    <div className={styles["projects-page__style-035"]}>
+                      <dt className={styles["projects-page__style-036"]}>Tags</dt>
+                      <dd className={styles["projects-page__style-049"]}>
+                        {visibleTags.length ? (
+                          <TagList tags={visibleTags} compact />
+                        ) : (
+                          <span className={styles["projects-page__style-050"]}>No tags</span>
+                        )}
+                        <IconTooltipButton
+                          onClick={(event) => openProjectTagsModal(project, event)}
+                          icon={Tags}
+                          label={`Edit tags for ${project.name}`}
+                          title="Edit tags."
+                          description="Open a tag editor for this project."
+                          className={styles["projects-page__style-046"]}
+                        />
+                      </dd>
+                    </div>
+                  </dl>
                   <div className={styles["projects-page__style-010"]}>
                     <div className={styles["projects-page__style-011"]}>
                       <span className={styles["projects-page__style-012"]}>Budget used</span>
@@ -249,34 +331,6 @@ export function ProjectsPage({
                       />
                     </div>
                   </div>
-                  <form
-                    className={styles["projects-page__style-015"]}
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      onProjectTagsChange(project.id, tagDrafts[project.id] || "");
-                    }}
-                  >
-                    <FormField label={`Tags for ${project.name}`} htmlFor={`${project.id}-tags`}>
-                      <input
-                        id={`${project.id}-tags`}
-                        value={tagDrafts[project.id] || ""}
-                        onChange={(event) =>
-                          setTagDrafts((current) => ({
-                            ...current,
-                            [project.id]: event.target.value
-                          }))
-                        }
-                        className={styles["projects-page__style-016"]}
-                        placeholder="Retainer, UX"
-                      />
-                    </FormField>
-                    <button
-                      type="submit"
-                      className={styles["projects-page__style-017"]}
-                    >
-                      Save tags
-                    </button>
-                  </form>
                 </article>
               );
             }) : (
@@ -388,7 +442,7 @@ export function ProjectsPage({
                   />
                 </FormField>
               </div>
-              <FormField label="Custom project tags" htmlFor="project-tags" helper="Separate tags with commas, such as Retainer, UX, High priority.">
+              <FormField label="Custom project tags" htmlFor="project-tags" helper={`Add up to ${MAX_TAGS} tags. Separate tags with commas, such as Retainer, UX, High priority.`}>
                 <input
                   id="project-tags"
                   value={form.tagText}
@@ -406,6 +460,71 @@ export function ProjectsPage({
                 </button>
                 <PrimaryButton type="submit" icon={isEditingProject ? Check : Plus}>
                   {isEditingProject ? "Save project" : "Create project"}
+                </PrimaryButton>
+              </div>
+            </form>
+          </section>
+        </div>
+      ) : null}
+
+      {tagModalProject ? (
+        <div
+          className={styles["projects-page__style-018"]}
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              closeProjectTagsModal();
+            }
+          }}
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="project-tags-modal-title"
+            aria-describedby="project-tags-modal-subtitle"
+            className={styles["projects-page__style-019"]}
+          >
+            <div className={styles["projects-page__style-020"]}>
+              <div>
+                <h2 id="project-tags-modal-title" className={styles["projects-page__style-021"]}>
+                  Tags for {tagModalProject.name}
+                </h2>
+                <p id="project-tags-modal-subtitle" className={styles["projects-page__style-022"]}>
+                  Update project tags without changing the project details.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeProjectTagsModal}
+                aria-label="Close tag editor"
+                className={styles["projects-page__style-023"]}
+              >
+                <X className={styles["projects-page__style-024"]} aria-hidden="true" />
+              </button>
+            </div>
+            <form
+              className={styles["projects-page__style-025"]}
+              onSubmit={handleProjectTagsSubmit}
+            >
+              <FormField label="Tags" htmlFor="project-tag-editor" helper={`Add up to ${MAX_TAGS} tags. Separate tags with commas, such as Retainer, UX, High priority.`}>
+                <input
+                  ref={tagInputRef}
+                  id="project-tag-editor"
+                  value={tagModalDraft}
+                  onChange={(event) => setTagModalDraft(event.target.value)}
+                  className={styles["projects-page__style-031"]}
+                  placeholder="Retainer, UX"
+                />
+              </FormField>
+              <div className={styles["projects-page__style-032"]}>
+                <button
+                  type="button"
+                  onClick={closeProjectTagsModal}
+                  className={styles["projects-page__style-033"]}
+                >
+                  Cancel
+                </button>
+                <PrimaryButton type="submit" icon={Check}>
+                  Save tags
                 </PrimaryButton>
               </div>
             </form>

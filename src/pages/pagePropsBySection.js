@@ -129,19 +129,23 @@ export function buildPagePropsBySection({
       onAddTimeOff: addTimeOffRequest
     },
     Overview: {
+      entries,
       weeklyEntries,
       weeklyTotal,
       projects,
-      expenses,
+      teamMembers,
+      todayKey,
       pendingApprovalCount,
       activityItems,
       onNavigate: handleNavigate
     },
     Dashboard: {
+      entries,
       weeklyEntries,
       weeklyTotal,
       projects,
-      expenses,
+      teamMembers,
+      todayKey,
       pendingApprovalCount,
       activityItems,
       onNavigate: handleNavigate

@@ -191,7 +191,6 @@ export function GanttChart({
                 >
                   <div className={styles["schedule-page__style-020"]}>
                     <ProjectBadge project={project} />
-                    <p className={styles["schedule-page__style-021"]}>{project.client}</p>
                     <p className={styles["schedule-page__style-022"]}>
                       {formatDurationLabel(projectScheduleItems.reduce((sum, item) => sum + scheduleDurationSeconds(item), 0))}
                       <span className={styles["schedule-page__style-023"]}> scheduled</span>
