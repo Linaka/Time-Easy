@@ -22,6 +22,50 @@
   @apply h-3 overflow-hidden rounded-full bg-slate-100;
 }
 
+.dashboard-page__style-007 {
+  @apply grid gap-5;
+}
+
+.dashboard-page__style-008 {
+  @apply space-y-3 p-4 sm:p-5;
+}
+
+.dashboard-page__style-009 {
+  @apply border-b border-slate-100 pb-3 last:border-b-0 last:pb-0;
+}
+
+.dashboard-page__style-010 {
+  @apply mb-3 flex items-center gap-3;
+}
+
+.dashboard-page__style-011 {
+  @apply flex size-7 shrink-0 items-center justify-center rounded-full bg-slate-950 text-xs font-bold text-white;
+}
+
+.dashboard-page__style-012 {
+  @apply min-w-0 flex-1;
+}
+
+.dashboard-page__style-013 {
+  @apply block truncate text-sm font-bold text-slate-950;
+}
+
+.dashboard-page__style-014 {
+  @apply block truncate text-xs font-semibold text-slate-500;
+}
+
+.dashboard-page__style-015 {
+  @apply shrink-0 font-mono text-sm font-bold text-slate-950;
+}
+
+.dashboard-page__style-016 {
+  @apply text-sm font-semibold text-slate-500;
+}
+
 .dashboard-page__progress-fill {
   @apply h-full rounded-full;
+}
+
+.dashboard-page__utilisation-fill {
+  @apply h-full rounded-full bg-slate-950;
 }
